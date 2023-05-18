@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChromeDriverLibrary", "ChromeDriverLibrary\ChromeDriverLibrary.csproj", "{590123F5-F1D3-4241-92C0-90272DD71898}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OracleAccountChecking", "OracleAccountChecking\OracleAccountChecking.csproj", "{7E19FE41-9845-4ED7-89A5-D894A53933B3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{590123F5-F1D3-4241-92C0-90272DD71898}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{590123F5-F1D3-4241-92C0-90272DD71898}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{590123F5-F1D3-4241-92C0-90272DD71898}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{590123F5-F1D3-4241-92C0-90272DD71898}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E19FE41-9845-4ED7-89A5-D894A53933B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E19FE41-9845-4ED7-89A5-D894A53933B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E19FE41-9845-4ED7-89A5-D894A53933B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E19FE41-9845-4ED7-89A5-D894A53933B3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A874CA97-7E9D-4D36-8EFA-AC1490348FFE}
+	EndGlobalSection
+EndGlobal
