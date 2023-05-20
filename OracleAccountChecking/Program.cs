@@ -1,6 +1,3 @@
-using ChromeDriverLibrary;
-using OracleAccountChecking.Services;
-
 namespace OracleAccountChecking
 {
     internal static class Program
@@ -9,7 +6,7 @@ namespace OracleAccountChecking
         static void Main()
         {
             ApplicationConfiguration.Initialize();
-            Application.Run(new FrmMain());
+            Application.Run(new FrmLogin());
         }
     }
 }

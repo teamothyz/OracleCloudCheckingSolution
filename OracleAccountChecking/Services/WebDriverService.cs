@@ -1,21 +1,19 @@
 ﻿using SeleniumUndetectedChromeDriver;
 using ChromeDriverLibrary;
-using System.Security.Policy;
 using OpenQA.Selenium;
-using System.Xml.Linq;
 using System.Text;
 
 namespace OracleAccountChecking.Services
 {
     public class WebDriverService
     {
-        public static async Task<bool> EnterTenant(UndetectedChromeDriver driver, string accountName, CancellationToken token)
+        public static async Task<Tuple<bool, string>> EnterTenant(UndetectedChromeDriver driver, string accountName, CancellationToken token)
         {
             try
             {
                 var url = $"https://cloud.oracle.com/?tenant={accountName}";
                 driver.GoToUrl(url);
-                
+
                 //check the existance of submit button (3mins)
                 for (var loop = 1; loop <= 6; loop++)
                 {
@@ -30,9 +28,11 @@ namespace OracleAccountChecking.Services
                         {
                             var endTime = DateTime.Now.AddSeconds(60);
                             while (driver.Url.Contains("oraclecloud.com/v1/oauth2")
-                                && endTime > DateTime.Now) await Task.Delay(3000, token).ConfigureAwait(false);
+                                && endTime > DateTime.Now)
+                                await Task.Delay(3000, token).ConfigureAwait(false);
 
-                            if (driver.Url.Contains("identity.oraclecloud.com/ui/v1/signin")) return true;
+                            if (driver.Url.Contains("identity.oraclecloud.com/ui/v1/signin"))
+                                return Tuple.Create(true, string.Empty);
                             try { driver.Click(submitFederationBtn, 10, token); } catch { }
                         }
 
@@ -40,20 +40,36 @@ namespace OracleAccountChecking.Services
                     }
                     catch
                     {
-                        if (driver.Url.Contains("identity.oraclecloud.com/ui/v1/signin")) return true;
+                        var isValid = CheckInvalidTenant(driver, token);
+                        if (!isValid) return Tuple.Create(false, "invalid tenant");
+
+                        if (driver.Url.Contains("identity.oraclecloud.com/ui/v1/signin"))
+                            return Tuple.Create(true, string.Empty);
                         else continue;
                     }
                 }
-                return driver.Url.Contains("identity.oraclecloud.com/ui/v1/signin");
+                var success = driver.Url.Contains("identity.oraclecloud.com/ui/v1/signin");
+                if (success) return Tuple.Create(true, string.Empty);
+                else return Tuple.Create(success, "can't load login url");
             }
             catch (Exception ex)
             {
-                //To do log exception
-                return false;
+                DataHandler.WriteLog(ex);
+                return Tuple.Create(false, ex.Message);
             }
         }
 
-        public static async Task<bool> Login(UndetectedChromeDriver driver, string email, string password, CancellationToken token)
+        private static bool CheckInvalidTenant(UndetectedChromeDriver driver, CancellationToken token)
+        {
+            try
+            {
+                _ = driver.FindElement("img.error-icon", 10, token);
+                return false;
+            }
+            catch { return true; }
+        }
+
+        public static async Task<Tuple<bool, string>> Login(UndetectedChromeDriver driver, string email, string password, CancellationToken token)
         {
             try
             {
@@ -70,20 +86,37 @@ namespace OracleAccountChecking.Services
 
                 for (var i = 1; i <= 3; i++)
                 {
-                    var loginEndTime = DateTime.Now.AddSeconds(120);
+                    var loginEndTime = DateTime.Now.AddSeconds(60);
                     while (!driver.Url.Contains("cloud.oracle.com/?region")
                         && loginEndTime > DateTime.Now) await Task.Delay(3000, token).ConfigureAwait(false);
 
-                    if (driver.Url.Contains("cloud.oracle.com/?region")) return true;
+                    if (driver.Url.Contains("cloud.oracle.com/?region"))
+                        return Tuple.Create(true, string.Empty);
+
+                    var loginSuccess = CheckValidLogin(driver, token);
+                    if (!loginSuccess) return Tuple.Create(true, "invalid email or password");
+                    
                     try { driver.Click(button, 10, token); } catch { }
                 }
-                return driver.Url.Contains("cloud.oracle.com/?region");
+                var success = driver.Url.Contains("cloud.oracle.com/?region");
+                if (success) return Tuple.Create(true, string.Empty);
+                else return Tuple.Create(success, "can't load login success url");
             }
             catch (Exception ex)
             {
-                //to do log
+                DataHandler.WriteLog(ex);
+                return Tuple.Create(false, ex.Message); ;
+            }
+        }
+
+        private static bool CheckValidLogin(UndetectedChromeDriver driver, CancellationToken token)
+        {
+            try
+            {
+                _ = driver.FindElement("span.idcs-icon.idcs-signin-Error-Warning.idcs-text-danger", 10, token);
                 return false;
             }
+            catch { return true; }
         }
 
         public static async Task<List<string>> GetBilling(UndetectedChromeDriver driver, CancellationToken token)
@@ -101,7 +134,11 @@ namespace OracleAccountChecking.Services
 
                 var table = driver.FindElement(@"div[data-test-id=""subscriptionsTable-id""]", 180, token);
                 var trs = table.FindElements(By.CssSelector("tbody > tr"));
-                if (trs == null) return result;
+                if (trs == null)
+                {
+                    result.Add("Not found table");
+                    return result;
+                }
 
                 foreach (var tr in trs)
                 {
@@ -133,7 +170,8 @@ namespace OracleAccountChecking.Services
             }
             catch (Exception ex)
             {
-                //to do log
+                DataHandler.WriteLog(ex);
+                result.Add($"exception {ex.Message}");
                 return result;
             }
         }

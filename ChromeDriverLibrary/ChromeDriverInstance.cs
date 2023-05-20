@@ -48,6 +48,7 @@ namespace ChromeDriverLibrary
 
                 if (proxyInfo.Count == 4)
                 {
+                    driver.SwitchTo().Window(driver.WindowHandles.First());
                     driver.GoToUrl("chrome://extensions");
                     Thread.Sleep(1000);
                     var findIdScript = "var done = arguments[0];" +
@@ -69,7 +70,7 @@ namespace ChromeDriverLibrary
             catch
             {
                 if (driver != null) try { driver.Quit(); } catch { };
-                throw;
+                return null;
             }
         }
     }
