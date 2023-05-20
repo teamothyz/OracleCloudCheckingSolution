@@ -6,7 +6,11 @@ namespace OracleAccountChecking
         static void Main()
         {
             ApplicationConfiguration.Initialize();
-            Application.Run(new FrmLogin());
+            var frmMain = new FrmMain
+            {
+                TopMost = true
+            };
+            Application.Run(frmMain);
         }
     }
 }

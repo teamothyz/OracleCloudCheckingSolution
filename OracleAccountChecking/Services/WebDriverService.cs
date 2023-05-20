@@ -7,6 +7,32 @@ namespace OracleAccountChecking.Services
 {
     public class WebDriverService
     {
+        public static int DefaultTimeout { get; set; } = 30;
+
+        public static async Task<bool> CheckTenant(UndetectedChromeDriver driver, string accountName, CancellationToken token)
+        {
+            driver.GoToUrl("https://www.oracle.com/cloud/sign-in.html");
+            var accountNameElm = driver.FindElement("#cloudAccountName", DefaultTimeout, token);
+            driver.Sendkeys(accountNameElm, accountName, true, 5, token);
+            await Task.Delay(3000, token).ConfigureAwait(false);
+
+            var button = driver.FindElement("#cloudAccountButton", DefaultTimeout, token);
+            driver.Click(button, 5, token);
+
+            await Task.Delay(5, token).ConfigureAwait(false);
+            if (!driver.Url.Contains("cloud/sign-in.html")) return true;
+
+            try
+            {
+                var errorElm = driver.FindElement(@"div[class=""rc63error icn-error-s opcSignInErrorContainer""][style=""""]", 10, token);
+                return false;
+            }
+            catch
+            {
+                return !driver.Url.Contains("cloud/sign-in.html");
+            }
+        }
+
         public static async Task<Tuple<bool, string>> EnterTenant(UndetectedChromeDriver driver, string accountName, CancellationToken token)
         {
             try
@@ -19,21 +45,22 @@ namespace OracleAccountChecking.Services
                 {
                     try
                     {
-                        var submitFederationBtn = driver.FindElement("#submit-federation", 30, token);
+                        var submitFederationBtn = driver.FindElement("#submit-federation", DefaultTimeout / 6, token);
                         await Task.Delay(3000, token).ConfigureAwait(false);
-                        driver.Click(submitFederationBtn, 30, token);
+
+                        driver.Click(submitFederationBtn, 5, token);
+                        await Task.Delay(3000, token).ConfigureAwait(false);
 
                         //wait for redirect to login page (3mins)
                         for (var innerLoop = 1; innerLoop <= 3; innerLoop++)
                         {
-                            var endTime = DateTime.Now.AddSeconds(60);
-                            while (driver.Url.Contains("oraclecloud.com/v1/oauth2")
-                                && endTime > DateTime.Now)
+                            var endTime = DateTime.Now.AddSeconds(DefaultTimeout / 3);
+                            while (driver.Url.Contains("oraclecloud.com/v1/oauth2") && endTime > DateTime.Now)
                                 await Task.Delay(3000, token).ConfigureAwait(false);
 
                             if (driver.Url.Contains("identity.oraclecloud.com/ui/v1/signin"))
                                 return Tuple.Create(true, string.Empty);
-                            try { driver.Click(submitFederationBtn, 10, token); } catch { }
+                            try { driver.Click(submitFederationBtn, 1, token); } catch { }
                         }
 
                         if (!driver.Url.Contains("identity.oraclecloud.com/ui/v1/signin")) continue;
@@ -73,20 +100,20 @@ namespace OracleAccountChecking.Services
         {
             try
             {
-                var emailInputElm = driver.FindElement("#idcs-signin-basic-signin-form-username", 120, token);
-                driver.Sendkeys(emailInputElm, email, true, 120, token);
+                var emailInputElm = driver.FindElement("#idcs-signin-basic-signin-form-username", DefaultTimeout, token);
+                driver.Sendkeys(emailInputElm, email, true, DefaultTimeout, token);
                 await Task.Delay(1000, token).ConfigureAwait(false);
 
-                var passInputElm = driver.FindElement(@"input[id=""idcs-signin-basic-signin-form-password|input""]", 120, token);
-                driver.Sendkeys(passInputElm, password, true, 120, token);
+                var passInputElm = driver.FindElement(@"input[id=""idcs-signin-basic-signin-form-password|input""]", DefaultTimeout, token);
+                driver.Sendkeys(passInputElm, password, true, DefaultTimeout, token);
                 await Task.Delay(1000, token).ConfigureAwait(false);
 
-                var button = driver.FindElement("#idcs-signin-basic-signin-form-submit > button > div", 120, token);
-                driver.Click(button, 30, token);
+                var button = driver.FindElement("#idcs-signin-basic-signin-form-submit > button > div", DefaultTimeout, token);
+                driver.Click(button, 5, token);
 
                 for (var i = 1; i <= 3; i++)
                 {
-                    var loginEndTime = DateTime.Now.AddSeconds(60);
+                    var loginEndTime = DateTime.Now.AddSeconds(DefaultTimeout / 3);
                     while (!driver.Url.Contains("cloud.oracle.com/?region")
                         && loginEndTime > DateTime.Now) await Task.Delay(3000, token).ConfigureAwait(false);
 
@@ -94,9 +121,9 @@ namespace OracleAccountChecking.Services
                         return Tuple.Create(true, string.Empty);
 
                     var loginSuccess = CheckValidLogin(driver, token);
-                    if (!loginSuccess) return Tuple.Create(true, "invalid email or password");
-                    
-                    try { driver.Click(button, 10, token); } catch { }
+                    if (!loginSuccess) return Tuple.Create(false, "invalid email or password");
+
+                    try { driver.Click(button, 1, token); } catch { }
                 }
                 var success = driver.Url.Contains("cloud.oracle.com/?region");
                 if (success) return Tuple.Create(true, string.Empty);
@@ -128,11 +155,11 @@ namespace OracleAccountChecking.Services
                 driver.GoToUrl(url);
                 await Task.Delay(1000, token).ConfigureAwait(false);
 
-                var iframe = driver.FindElement("#sandbox-billing-and-payments-container", 180, token);
+                var iframe = driver.FindElement("#sandbox-billing-and-payments-container", DefaultTimeout, token);
                 driver.SwitchTo().Frame(iframe);
                 await Task.Delay(1000, token).ConfigureAwait(false);
 
-                var table = driver.FindElement(@"div[data-test-id=""subscriptionsTable-id""]", 180, token);
+                var table = driver.FindElement(@"div[data-test-id=""subscriptionsTable-id""]", DefaultTimeout, token);
                 var trs = table.FindElements(By.CssSelector("tbody > tr"));
                 if (trs == null)
                 {
@@ -154,7 +181,7 @@ namespace OracleAccountChecking.Services
                             var innerElm = td.FindElement(By.TagName("a"));
                             tdContent = (string)driver.ExecuteScript("return arguments[0].innerText;", innerElm);
                         }
-                        else if (index == 1)
+                        else if (index == 3)
                         {
                             var innerElm = td.FindElement(By.TagName("span"));
                             tdContent = (string)driver.ExecuteScript("return arguments[0].innerText;", innerElm);

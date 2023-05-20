@@ -12,6 +12,7 @@ namespace OracleAccountChecking
         private List<string> Proxies;
         private readonly CountModel CountModel;
         private CancellationTokenSource CancelToken;
+        private CancellationTokenSource ForceCancelToken;
 
         private bool IsHeadless = true;
         private bool UseProxy = false;
@@ -23,6 +24,8 @@ namespace OracleAccountChecking
         private readonly int HeightCount;
         private readonly int WidthCount;
 
+        private readonly List<string> ExtensionPaths;
+
         public FrmMain()
         {
             InitializeComponent();
@@ -31,6 +34,8 @@ namespace OracleAccountChecking
             Proxies = new();
             CountModel = new();
             CancelToken = new();
+            ForceCancelToken = new();
+            ExtensionPaths = new();
 
             TotalTextBox.DataBindings.Add("Text", CountModel, "Total");
             SuccessTextBox.DataBindings.Add("Text", CountModel, "Success");
@@ -69,13 +74,15 @@ namespace OracleAccountChecking
                 proxyIndex = 0;
                 var tasks = new List<Task>();
                 CancelToken = new();
+                ForceCancelToken = new();
                 var totalThread = Accounts.Count > TotalThreads ? TotalThreads : Accounts.Count;
 
+                var forceToken = ForceCancelToken.Token;
                 for (var i = 0; i < totalThread; i++)
                 {
                     var token = CancelToken.Token;
                     var index = i;
-                    var task = Task.Run(async () => await RunThread(index, token));
+                    var task = Task.Run(async () => await RunThread(index, token), forceToken);
                     tasks.Add(task);
                 }
                 await Task.WhenAll(tasks);
@@ -133,7 +140,7 @@ namespace OracleAccountChecking
                     if (account == null) return;
 
                     driver = await Task.Run(() => ChromeDriverInstance.GetInstance(positionX: positionX, positionY: positionY,
-                        proxy: proxy, isHeadless: IsHeadless, token), token);
+                        proxy: proxy, isHeadless: IsHeadless, extensionPaths: ExtensionPaths, token: token), token);
                     if (driver == null)
                     {
                         DataHandler.WriteLog(new Exception("can't create chrome driver"));
@@ -152,7 +159,7 @@ namespace OracleAccountChecking
                 DataHandler.WriteLog(ex);
                 if (completed == false && account != null)
                 {
-                    DataHandler.WriteFailedData(account, "cancel scan");
+                    DataHandler.WriteFailedData(account, "failed caused by cancel scan");
                     lock (CountModel)
                     {
                         Invoke(() =>
@@ -170,6 +177,20 @@ namespace OracleAccountChecking
             try
             {
                 var accountName = account.Email.Split("@")[0];
+                var checkTenant = await WebDriverService.CheckTenant(driver, accountName, token);
+                if (!checkTenant)
+                {
+                    DataHandler.WriteFailedData(account, "check tenant failed");
+                    lock (CountModel)
+                    {
+                        Invoke(() =>
+                        {
+                            CountModel.Failed++;
+                            CountModel.Remaining--;
+                        });
+                    }
+                    return;
+                }
 
                 var tenantRs = await WebDriverService.EnterTenant(driver, accountName, token);
                 if (!tenantRs.Item1)
@@ -249,8 +270,12 @@ namespace OracleAccountChecking
                 ProxyLessRadioBtn.Enabled = !isRun;
                 HttpRadioBtn.Enabled = !isRun;
                 Socks5RadioBtn.Enabled = !isRun;
+                TimeoutInput.Enabled = !isRun;
+                ClearExtensionsBtn.Enabled = !isRun;
+                ExtensionBtn.Enabled = !isRun;
 
                 StopBtn.Enabled = isRun;
+                ForceStopBtn.Enabled = isRun;
             });
         }
 
@@ -321,6 +346,42 @@ namespace OracleAccountChecking
         {
             UseProxy = true;
             ProxyPrefix = "socks5://";
+        }
+
+        private void TopMostBtn_CheckedChanged(object sender, EventArgs e)
+        {
+            this.TopMost = TopMostBtn.Checked;
+        }
+
+        private void ForceStopBtn_Click(object sender, EventArgs e)
+        {
+            ActiveControl = TotalTextBox;
+            ChromeDriverInstance.ForceKillAll();
+            ForceCancelToken.Cancel();
+        }
+
+        private void TimeoutInput_ValueChanged(object sender, EventArgs e)
+        {
+            WebDriverService.DefaultTimeout = (int)TimeoutInput.Value;
+        }
+
+        private void ExtensionBtn_Click(object sender, EventArgs e)
+        {
+            ActiveControl = TotalTextBox;
+            using var folderBrowserDialog = new FolderBrowserDialog();
+            if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+            {
+                ExtensionPaths.Clear();
+                ExtensionPaths.AddRange(Directory.GetDirectories(folderBrowserDialog.SelectedPath));
+                Invoke(() => ExtensionsTextBox.Text = ExtensionPaths.Count.ToString());
+            }
+        }
+
+        private void ClearExtensionsBtn_Click(object sender, EventArgs e)
+        {
+            ActiveControl = TotalTextBox;
+            ExtensionPaths.Clear();
+            Invoke(() => ExtensionsTextBox.Text = ExtensionPaths.Count.ToString());
         }
     }
 }

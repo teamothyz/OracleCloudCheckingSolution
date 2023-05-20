@@ -1,13 +1,15 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using SeleniumUndetectedChromeDriver;
+using System.Diagnostics;
 
 namespace ChromeDriverLibrary
 {
     public class ChromeDriverInstance
     {
-        public static UndetectedChromeDriver? GetInstance(int positionX, int positionY, 
-            string? proxy = null, bool isHeadless = true, CancellationToken? token = null)
+        public static UndetectedChromeDriver? GetInstance(int positionX, int positionY,
+            string? proxy = null, bool isHeadless = true,
+            List<string>? extensionPaths = null, CancellationToken? token = null)
         {
             UndetectedChromeDriver? driver = null;
             try
@@ -36,11 +38,12 @@ namespace ChromeDriverLibrary
 
                     options.AddArgument($"--proxy-server={prefix}{proxyInfo[0]}:{proxyInfo[1]}");
                 }
-                if (proxyInfo.Count == 4)
-                {
-                    var basePath = AppDomain.CurrentDomain.BaseDirectory;
-                    options.AddArgument($"--load-extension={basePath}/chromedriver/proxyauth");
-                }
+
+                var basePath = AppDomain.CurrentDomain.BaseDirectory;
+                options.AddArgument($"--load-extension={basePath}/chromedriver/bypasscookie");
+                extensionPaths?.ForEach(path => options.AddArgument($"--load-extension={path}"));
+
+                if (proxyInfo.Count == 4) options.AddArgument($"--load-extension={basePath}/chromedriver/proxyauth");
 
                 driver = UndetectedChromeDriver.Create(driverExecutablePath: "chromedriver/chromedriver.exe",
                     headless: isHeadless,
@@ -74,6 +77,21 @@ namespace ChromeDriverLibrary
                 if (driver != null) try { driver.Quit(); } catch { }
                 return null;
             }
+        }
+
+        public static void ForceKillAll()
+        {
+            try
+            {
+                var process = new Process();
+                process.StartInfo.FileName = "chromedriver/kill.bat";
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.CreateNoWindow = true;
+                process.Start();
+                process.WaitForExit();
+            }
+            catch { }
         }
     }
 }
