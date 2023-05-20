@@ -8,4 +8,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Krypton.Navigator" Version="70.22.11.312" />
+    <PackageReference Include="Krypton.Toolkit" Version="70.22.11.312" />
+    <PackageReference Include="Selenium.UndetectedChromeDriver" Version="1.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ChromeDriverLibrary\ChromeDriverLibrary.csproj" />
+  </ItemGroup>
+
 </Project>

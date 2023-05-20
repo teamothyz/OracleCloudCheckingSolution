@@ -6,6 +6,13 @@ namespace ChromeDriverLibrary
 {
     public static class ChromeDriverExtension
     {
+        public static IWebElement FindInnerElement(this UndetectedChromeDriver driver, IWebElement element, string selector, int timeout, CancellationToken token)
+        {
+            var waiter = GetWaiter(driver, timeout);
+            var innerElement = waiter.Until(webdriver => element.FindElement(By.CssSelector(selector)), token);
+            return innerElement;
+        }
+
         public static IWebElement FindElement(this UndetectedChromeDriver driver, string selector, int timeout, CancellationToken token)
         {
             var waiter = GetWaiter(driver, timeout);
@@ -13,14 +20,23 @@ namespace ChromeDriverLibrary
             return element;
         }
 
-        public static void Sendkeys(this UndetectedChromeDriver driver, IWebElement element, string content, int timeout, CancellationToken token)
+        public static void Sendkeys(this UndetectedChromeDriver driver, IWebElement element, string content, bool needCompare, int timeout, CancellationToken token)
         {
             var waiter = GetWaiter(driver, timeout);
             waiter.Until(webdriver =>
             {
-                element.Clear();
-                Thread.Sleep(500);
+                try
+                {
+                    element.Click();
+                    Thread.Sleep(500);
+                    element.Clear();
+                    Thread.Sleep(500);
+                }
+                catch { }
+
                 element.SendKeys(content);
+                Thread.Sleep(500);
+                if (!needCompare) return true;
                 return CompareContent(driver, element, content);
             }, token);
         }
@@ -32,6 +48,15 @@ namespace ChromeDriverLibrary
             {
                 element.Click();
                 return true;
+            }, token);
+        }
+
+        public static IAlert SwitchToAlert(this UndetectedChromeDriver driver, int timeout, CancellationToken token)
+        {
+            var waiter = GetWaiter(driver, timeout);
+            return waiter.Until(webdriver =>
+            {
+                return driver.SwitchTo().Alert();
             }, token);
         }
 
@@ -47,7 +72,7 @@ namespace ChromeDriverLibrary
 
                 throw new WebDriverException("content does not match");
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 throw new WebDriverException(ex.Message);
             }
@@ -60,8 +85,9 @@ namespace ChromeDriverLibrary
                 typeof(ElementNotVisibleException),
                 typeof(ElementNotInteractableException),
                 typeof(StaleElementReferenceException),
-                typeof(WebDriverException),
+                typeof(NoAlertPresentException),
                 typeof(WebDriverTimeoutException));
+
             return wait;
         }
     }
