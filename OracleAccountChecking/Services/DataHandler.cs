@@ -55,10 +55,10 @@ namespace OracleAccountChecking.Services
                     var line = reader.ReadLine();
                     while (line != null)
                     {
-                        if (line.StartsWith("http://")
-                            && line.StartsWith("https://")
-                            && line.StartsWith("socks5://"))
-                            data.Add(line.Trim());
+                        var detail = line.Split(":");
+                        if (detail.Length != 2 && detail.Length != 4) continue;
+                        else data.Add(line);
+
                         line = reader.ReadLine();
                     }
                 }
@@ -79,7 +79,7 @@ namespace OracleAccountChecking.Services
                     var basePath = AppDomain.CurrentDomain.BaseDirectory;
                     var directoryPath = $"{basePath}/success";
                     var fileName = $"{DateTime.Now:ddMMyyyy}success.txt";
-                    if (Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath);
+                    if (!Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath);
                     using var writer = new StreamWriter($"{directoryPath}/{fileName}", true);
                     var data = $"{acc.Email}:{acc.Password}:{string.Join(";", bills)}";
                     writer.WriteLine(data);
@@ -102,7 +102,7 @@ namespace OracleAccountChecking.Services
                     var basePath = AppDomain.CurrentDomain.BaseDirectory;
                     var directoryPath = $"{basePath}/failed";
                     var fileName = $"{DateTime.Now:ddMMyyyy}failed.txt";
-                    if (Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath);
+                    if (!Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath);
                     using var writer = new StreamWriter($"{directoryPath}/{fileName}", true);
                     var data = $"{acc.Email}:{acc.Password}:{reason}";
                     writer.WriteLine(data);
@@ -132,7 +132,7 @@ namespace OracleAccountChecking.Services
                 var basePath = AppDomain.CurrentDomain.BaseDirectory;
                 var directoryPath = $"{basePath}/logs";
                 var fileName = $"{DateTime.Now:ddMMyyyy}simplelog.txt";
-                if (Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath);
+                if (!Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath);
                 using var writer = new StreamWriter($"{directoryPath}/{fileName}", true);
                 writer.WriteLine(data);
                 writer.Flush();
@@ -148,7 +148,7 @@ namespace OracleAccountChecking.Services
                 var basePath = AppDomain.CurrentDomain.BaseDirectory;
                 var directoryPath = $"{basePath}/logs";
                 var fileName = $"{DateTime.Now:ddMMyyyy}log.txt";
-                if (Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath);
+                if (!Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath);
                 using var writer = new StreamWriter($"{directoryPath}/{fileName}", true);
                 writer.WriteLine(data);
                 writer.Flush();

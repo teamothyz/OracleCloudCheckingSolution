@@ -45,14 +45,19 @@
             this.ThreadInput = new Krypton.Toolkit.KryptonNumericUpDown();
             this.ProxyTextBox = new Krypton.Toolkit.KryptonTextBox();
             this.kryptonLabel6 = new Krypton.Toolkit.KryptonLabel();
+            this.HideChromeCheckBox = new Krypton.Toolkit.KryptonCheckBox();
+            this.HttpRadioBtn = new Krypton.Toolkit.KryptonRadioButton();
+            this.ProxyLessRadioBtn = new Krypton.Toolkit.KryptonRadioButton();
+            this.Socks5RadioBtn = new Krypton.Toolkit.KryptonRadioButton();
+            this.kryptonLabel7 = new Krypton.Toolkit.KryptonLabel();
             this.SuspendLayout();
             // 
             // DataBtn
             // 
             this.DataBtn.CornerRoundingRadius = -1F;
-            this.DataBtn.Location = new System.Drawing.Point(261, 17);
+            this.DataBtn.Location = new System.Drawing.Point(245, 17);
             this.DataBtn.Name = "DataBtn";
-            this.DataBtn.Size = new System.Drawing.Size(103, 25);
+            this.DataBtn.Size = new System.Drawing.Size(119, 25);
             this.DataBtn.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
             this.DataBtn.StateCommon.Back.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
             this.DataBtn.StateCommon.Content.ShortText.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
@@ -157,9 +162,9 @@
             // ProxyBtn
             // 
             this.ProxyBtn.CornerRoundingRadius = -1F;
-            this.ProxyBtn.Location = new System.Drawing.Point(261, 68);
+            this.ProxyBtn.Location = new System.Drawing.Point(245, 68);
             this.ProxyBtn.Name = "ProxyBtn";
-            this.ProxyBtn.Size = new System.Drawing.Size(103, 25);
+            this.ProxyBtn.Size = new System.Drawing.Size(119, 25);
             this.ProxyBtn.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
             this.ProxyBtn.StateCommon.Back.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
             this.ProxyBtn.StateCommon.Content.ShortText.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
@@ -173,9 +178,9 @@
             // 
             this.StopBtn.CornerRoundingRadius = -1F;
             this.StopBtn.Enabled = false;
-            this.StopBtn.Location = new System.Drawing.Point(261, 227);
+            this.StopBtn.Location = new System.Drawing.Point(245, 270);
             this.StopBtn.Name = "StopBtn";
-            this.StopBtn.Size = new System.Drawing.Size(103, 25);
+            this.StopBtn.Size = new System.Drawing.Size(119, 25);
             this.StopBtn.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.StopBtn.StateCommon.Back.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.StopBtn.StateCommon.Content.ShortText.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
@@ -188,9 +193,9 @@
             // StartBtn
             // 
             this.StartBtn.CornerRoundingRadius = -1F;
-            this.StartBtn.Location = new System.Drawing.Point(261, 174);
+            this.StartBtn.Location = new System.Drawing.Point(245, 223);
             this.StartBtn.Name = "StartBtn";
-            this.StartBtn.Size = new System.Drawing.Size(103, 25);
+            this.StartBtn.Size = new System.Drawing.Size(119, 25);
             this.StartBtn.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
             this.StartBtn.StateCommon.Back.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
             this.StartBtn.StateCommon.Content.ShortText.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
@@ -202,7 +207,7 @@
             // 
             // kryptonLabel5
             // 
-            this.kryptonLabel5.Location = new System.Drawing.Point(257, 126);
+            this.kryptonLabel5.Location = new System.Drawing.Point(245, 126);
             this.kryptonLabel5.Name = "kryptonLabel5";
             this.kryptonLabel5.Size = new System.Drawing.Size(50, 20);
             this.kryptonLabel5.StateCommon.ShortText.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
@@ -239,33 +244,100 @@
             // 
             // ProxyTextBox
             // 
-            this.ProxyTextBox.Location = new System.Drawing.Point(127, 229);
+            this.ProxyTextBox.Location = new System.Drawing.Point(127, 225);
             this.ProxyTextBox.Name = "ProxyTextBox";
             this.ProxyTextBox.ReadOnly = true;
             this.ProxyTextBox.Size = new System.Drawing.Size(100, 23);
             this.ProxyTextBox.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.ProxyTextBox.StateCommon.Content.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.ProxyTextBox.TabIndex = 16;
-            this.ProxyTextBox.Text = "None";
+            this.ProxyTextBox.Text = "0";
             this.ProxyTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // kryptonLabel6
             // 
-            this.kryptonLabel6.Location = new System.Drawing.Point(12, 232);
+            this.kryptonLabel6.Location = new System.Drawing.Point(12, 228);
             this.kryptonLabel6.Name = "kryptonLabel6";
-            this.kryptonLabel6.Size = new System.Drawing.Size(47, 20);
+            this.kryptonLabel6.Size = new System.Drawing.Size(103, 20);
             this.kryptonLabel6.StateCommon.ShortText.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.kryptonLabel6.StateCommon.ShortText.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.kryptonLabel6.StateCommon.ShortText.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.kryptonLabel6.TabIndex = 15;
-            this.kryptonLabel6.Values.Text = "Proxy:";
+            this.kryptonLabel6.Values.Text = "Số lượng Proxy:";
+            // 
+            // HideChromeCheckBox
+            // 
+            this.HideChromeCheckBox.Checked = true;
+            this.HideChromeCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.HideChromeCheckBox.Location = new System.Drawing.Point(248, 176);
+            this.HideChromeCheckBox.Name = "HideChromeCheckBox";
+            this.HideChromeCheckBox.Size = new System.Drawing.Size(87, 20);
+            this.HideChromeCheckBox.StateCommon.ShortText.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.HideChromeCheckBox.StateCommon.ShortText.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.HideChromeCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.HideChromeCheckBox.TabIndex = 18;
+            this.HideChromeCheckBox.Values.Text = "Ẩn chrome";
+            this.HideChromeCheckBox.CheckedChanged += new System.EventHandler(this.HideChromeCheckBox_CheckedChanged);
+            // 
+            // HttpRadioBtn
+            // 
+            this.HttpRadioBtn.Location = new System.Drawing.Point(127, 296);
+            this.HttpRadioBtn.Name = "HttpRadioBtn";
+            this.HttpRadioBtn.Size = new System.Drawing.Size(49, 20);
+            this.HttpRadioBtn.StateCommon.ShortText.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.HttpRadioBtn.StateCommon.ShortText.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.HttpRadioBtn.StateCommon.ShortText.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.HttpRadioBtn.TabIndex = 19;
+            this.HttpRadioBtn.Values.Text = "Http";
+            this.HttpRadioBtn.CheckedChanged += new System.EventHandler(this.HttpRadioBtn_CheckedChanged);
+            // 
+            // ProxyLessRadioBtn
+            // 
+            this.ProxyLessRadioBtn.Checked = true;
+            this.ProxyLessRadioBtn.Location = new System.Drawing.Point(127, 270);
+            this.ProxyLessRadioBtn.Name = "ProxyLessRadioBtn";
+            this.ProxyLessRadioBtn.Size = new System.Drawing.Size(77, 20);
+            this.ProxyLessRadioBtn.StateCommon.ShortText.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.ProxyLessRadioBtn.StateCommon.ShortText.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.ProxyLessRadioBtn.StateCommon.ShortText.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.ProxyLessRadioBtn.TabIndex = 20;
+            this.ProxyLessRadioBtn.Values.Text = "Proxyless";
+            this.ProxyLessRadioBtn.CheckedChanged += new System.EventHandler(this.ProxyLessRadioBtn_CheckedChanged);
+            // 
+            // Socks5RadioBtn
+            // 
+            this.Socks5RadioBtn.Location = new System.Drawing.Point(127, 322);
+            this.Socks5RadioBtn.Name = "Socks5RadioBtn";
+            this.Socks5RadioBtn.Size = new System.Drawing.Size(62, 20);
+            this.Socks5RadioBtn.StateCommon.ShortText.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.Socks5RadioBtn.StateCommon.ShortText.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.Socks5RadioBtn.StateCommon.ShortText.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.Socks5RadioBtn.TabIndex = 21;
+            this.Socks5RadioBtn.Values.Text = "Socks5";
+            this.Socks5RadioBtn.CheckedChanged += new System.EventHandler(this.Socks5RadioBtn_CheckedChanged);
+            // 
+            // kryptonLabel7
+            // 
+            this.kryptonLabel7.Location = new System.Drawing.Point(12, 270);
+            this.kryptonLabel7.Name = "kryptonLabel7";
+            this.kryptonLabel7.Size = new System.Drawing.Size(75, 20);
+            this.kryptonLabel7.StateCommon.ShortText.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.kryptonLabel7.StateCommon.ShortText.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.kryptonLabel7.StateCommon.ShortText.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.kryptonLabel7.TabIndex = 22;
+            this.kryptonLabel7.Values.Text = "Loại Proxy:";
             // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
-            this.ClientSize = new System.Drawing.Size(376, 286);
+            this.ClientSize = new System.Drawing.Size(376, 398);
+            this.Controls.Add(this.kryptonLabel7);
+            this.Controls.Add(this.Socks5RadioBtn);
+            this.Controls.Add(this.ProxyLessRadioBtn);
+            this.Controls.Add(this.HttpRadioBtn);
+            this.Controls.Add(this.HideChromeCheckBox);
             this.Controls.Add(this.ProxyTextBox);
             this.Controls.Add(this.kryptonLabel6);
             this.Controls.Add(this.ThreadInput);
@@ -284,8 +356,6 @@
             this.Controls.Add(this.DataBtn);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(392, 325);
-            this.MinimumSize = new System.Drawing.Size(392, 325);
             this.Name = "FrmMain";
             this.Text = "Oracle Checking - Tele: @lukaxsx";
             this.ResumeLayout(false);
@@ -311,5 +381,10 @@
         private Krypton.Toolkit.KryptonNumericUpDown ThreadInput;
         private Krypton.Toolkit.KryptonTextBox ProxyTextBox;
         private Krypton.Toolkit.KryptonLabel kryptonLabel6;
+        private Krypton.Toolkit.KryptonCheckBox HideChromeCheckBox;
+        private Krypton.Toolkit.KryptonRadioButton HttpRadioBtn;
+        private Krypton.Toolkit.KryptonRadioButton ProxyLessRadioBtn;
+        private Krypton.Toolkit.KryptonRadioButton Socks5RadioBtn;
+        private Krypton.Toolkit.KryptonLabel kryptonLabel7;
     }
 }

@@ -1,11 +1,13 @@
-﻿using OpenQA.Selenium.Chrome;
+﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
 using SeleniumUndetectedChromeDriver;
 
 namespace ChromeDriverLibrary
 {
     public class ChromeDriverInstance
     {
-        public static UndetectedChromeDriver? GetInstance(string? proxy = null, bool isHeadless = true, CancellationToken? token = null)
+        public static UndetectedChromeDriver? GetInstance(int positionX, int positionY, 
+            string? proxy = null, bool isHeadless = true, CancellationToken? token = null)
         {
             UndetectedChromeDriver? driver = null;
             try
@@ -40,12 +42,12 @@ namespace ChromeDriverLibrary
                     options.AddArgument($"--load-extension={basePath}/chromedriver/proxyauth");
                 }
 
-                driver = UndetectedChromeDriver.Create(
-                    driverExecutablePath: "chromedriver/chromedriver.exe",
+                driver = UndetectedChromeDriver.Create(driverExecutablePath: "chromedriver/chromedriver.exe",
                     headless: isHeadless,
                     hideCommandPromptWindow: true,
                     options: options);
-
+                driver.Manage().Window.Position = new System.Drawing.Point(positionX, positionY);
+                driver.Manage().Window.Size = new System.Drawing.Size(375, 500);
                 if (proxyInfo.Count == 4)
                 {
                     driver.SwitchTo().Window(driver.WindowHandles.First());
@@ -69,7 +71,7 @@ namespace ChromeDriverLibrary
             }
             catch
             {
-                if (driver != null) try { driver.Quit(); } catch { };
+                if (driver != null) try { driver.Quit(); } catch { }
                 return null;
             }
         }

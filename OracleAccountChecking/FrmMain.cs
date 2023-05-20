@@ -13,8 +13,15 @@ namespace OracleAccountChecking
         private readonly CountModel CountModel;
         private CancellationTokenSource CancelToken;
 
+        private bool IsHeadless = true;
+        private bool UseProxy = false;
+        private string ProxyPrefix = string.Empty;
+
         private int proxyIndex = 0;
         private static readonly object lockRun = new();
+
+        private readonly int HeightCount;
+        private readonly int WidthCount;
 
         public FrmMain()
         {
@@ -31,15 +38,23 @@ namespace OracleAccountChecking
             RemainTextBox.DataBindings.Add("Text", CountModel, "Remaining");
 
             ActiveControl = TotalTextBox;
+
+            HeightCount = Screen.PrimaryScreen.Bounds.Height / 500;
+            WidthCount = Screen.PrimaryScreen.Bounds.Width / 375;
         }
 
         private async void StartBtn_Click(object sender, EventArgs e)
         {
             ActiveControl = TotalTextBox;
             var currentTitle = Text;
-            if (Proxies.Count == 0 || Accounts.Count == 0)
+            if (Accounts.Count == 0)
             {
                 MessageBox.Show("Vui lòng nhập dữ liệu", "Cảnh báo");
+                return;
+            }
+            if (UseProxy && Proxies.Count == 0)
+            {
+                MessageBox.Show("Vui lòng nhập proxy", "Cảnh báo");
                 return;
             }
             EnableBtn(true);
@@ -53,10 +68,14 @@ namespace OracleAccountChecking
 
                 proxyIndex = 0;
                 var tasks = new List<Task>();
-                for (var i = 0; i < TotalThreads; i++)
+                CancelToken = new();
+                var totalThread = Accounts.Count > TotalThreads ? TotalThreads : Accounts.Count;
+
+                for (var i = 0; i < totalThread; i++)
                 {
                     var token = CancelToken.Token;
-                    var task = Task.Run(async () => await RunThread(token));
+                    var index = i;
+                    var task = Task.Run(async () => await RunThread(index, token));
                     tasks.Add(task);
                 }
                 await Task.WhenAll(tasks);
@@ -76,29 +95,23 @@ namespace OracleAccountChecking
             }
         }
 
-        private async Task RunThread(CancellationToken token)
+        private async Task RunThread(int index, CancellationToken token)
         {
+            index %= (WidthCount * HeightCount + 1);
+            var positionX = (index % WidthCount) * 375;
+            var positionY = (index / WidthCount) * 500;
+
+            var proxy = string.Empty;
+            Account? account = null;
+            var completed = true;
+            UndetectedChromeDriver? driver = null;
+
             try
             {
-                var proxy = string.Empty;
-                Account? account = null;
-                var completed = true;
-
                 while (true)
                 {
-                    if (token.IsCancellationRequested)
-                    {
-                        if (completed == false && account != null)
-                        {
-                            DataHandler.WriteFailedData(account, "cancel scan");
-                            lock (CountModel)
-                            {
-                                CountModel.Failed++;
-                                CountModel.Remaining--;
-                            }
-                        }
-                        return;
-                    }
+                    if (token.IsCancellationRequested) return;
+
                     lock (lockRun)
                     {
                         if (completed)
@@ -106,21 +119,29 @@ namespace OracleAccountChecking
                             if (Accounts.Count > 0)
                             {
                                 account = Accounts.Dequeue();
-                                if (proxyIndex >= Proxies.Count) proxyIndex = 0;
-                                proxy = Proxies[proxyIndex];
-                                proxyIndex++;
+                                if (UseProxy)
+                                {
+                                    if (proxyIndex >= Proxies.Count) proxyIndex = 0;
+                                    proxy = ProxyPrefix + Proxies[proxyIndex];
+                                    proxyIndex++;
+                                }
                                 completed = false;
                             }
                             else return;
                         }
                     }
-                    if (account == null || string.IsNullOrEmpty(proxy)) return;
+                    if (account == null) return;
 
-                    var driver = await Task.Run(() => ChromeDriverInstance.GetInstance(proxy, true, token), token);
-                    if (driver == null) throw new Exception("can't create chrome driver");
-                    completed = true;
-
+                    driver = await Task.Run(() => ChromeDriverInstance.GetInstance(positionX: positionX, positionY: positionY,
+                        proxy: proxy, isHeadless: IsHeadless, token), token);
+                    if (driver == null)
+                    {
+                        DataHandler.WriteLog(new Exception("can't create chrome driver"));
+                        await Task.Delay(3000, token).ConfigureAwait(false);
+                        continue;
+                    }
                     await CheckAccount(account, driver, token);
+                    completed = true;
                     try { driver?.Quit(); } catch { }
 
                     await Task.Delay(3000, token).ConfigureAwait(false);
@@ -129,6 +150,18 @@ namespace OracleAccountChecking
             catch (Exception ex)
             {
                 DataHandler.WriteLog(ex);
+                if (completed == false && account != null)
+                {
+                    DataHandler.WriteFailedData(account, "cancel scan");
+                    lock (CountModel)
+                    {
+                        Invoke(() =>
+                        {
+                            CountModel.Failed++;
+                            CountModel.Remaining--;
+                        });
+                    }
+                }
             }
         }
 
@@ -144,8 +177,11 @@ namespace OracleAccountChecking
                     DataHandler.WriteFailedData(account, tenantRs.Item2);
                     lock (CountModel)
                     {
-                        CountModel.Failed++;
-                        CountModel.Remaining--;
+                        Invoke(() =>
+                        {
+                            CountModel.Failed++;
+                            CountModel.Remaining--;
+                        });
                     }
                     return;
                 }
@@ -156,8 +192,11 @@ namespace OracleAccountChecking
                     DataHandler.WriteFailedData(account, loginRs.Item2);
                     lock (CountModel)
                     {
-                        CountModel.Failed++;
-                        CountModel.Remaining--;
+                        Invoke(() =>
+                        {
+                            CountModel.Failed++;
+                            CountModel.Remaining--;
+                        });
                     }
                     return;
                 }
@@ -166,19 +205,29 @@ namespace OracleAccountChecking
                 DataHandler.WriteSuccessData(account, bills);
                 lock (CountModel)
                 {
-                    CountModel.Success++;
-                    CountModel.Remaining--;
+                    Invoke(() =>
+                    {
+                        CountModel.Success++;
+                        CountModel.Remaining--;
+                    });
                 }
             }
             catch (Exception ex)
             {
                 lock (CountModel)
                 {
-                    CountModel.Failed++;
-                    CountModel.Remaining--;
+                    Invoke(() =>
+                    {
+                        CountModel.Failed++;
+                        CountModel.Remaining--;
+                    });
                 }
                 DataHandler.WriteLog(ex);
                 DataHandler.WriteFailedData(account, ex.Message);
+            }
+            finally
+            {
+                try { driver?.Quit(); } catch { }
             }
         }
 
@@ -196,6 +245,10 @@ namespace OracleAccountChecking
                 DataBtn.Enabled = !isRun;
                 ProxyBtn.Enabled = !isRun;
                 ThreadInput.Enabled = !isRun;
+                HideChromeCheckBox.Enabled = !isRun;
+                ProxyLessRadioBtn.Enabled = !isRun;
+                HttpRadioBtn.Enabled = !isRun;
+                Socks5RadioBtn.Enabled = !isRun;
 
                 StopBtn.Enabled = isRun;
             });
@@ -245,6 +298,29 @@ namespace OracleAccountChecking
         private void ThreadInput_ValueChanged(object sender, EventArgs e)
         {
             TotalThreads = (int)ThreadInput.Value;
+        }
+
+        private void HideChromeCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            IsHeadless = HideChromeCheckBox.Checked;
+        }
+
+        private void ProxyLessRadioBtn_CheckedChanged(object sender, EventArgs e)
+        {
+            UseProxy = false;
+            ProxyPrefix = string.Empty;
+        }
+
+        private void HttpRadioBtn_CheckedChanged(object sender, EventArgs e)
+        {
+            UseProxy = true;
+            ProxyPrefix = "http://";
+        }
+
+        private void Socks5RadioBtn_CheckedChanged(object sender, EventArgs e)
+        {
+            UseProxy = true;
+            ProxyPrefix = "socks5://";
         }
     }
 }
