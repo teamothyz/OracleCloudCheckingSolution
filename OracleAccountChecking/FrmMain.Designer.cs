@@ -58,6 +58,7 @@
             this.ExtensionsTextBox = new Krypton.Toolkit.KryptonTextBox();
             this.ExtensionBtn = new Krypton.Toolkit.KryptonButton();
             this.ClearExtensionsBtn = new Krypton.Toolkit.KryptonButton();
+            this.LoadExtensionBtn = new Krypton.Toolkit.KryptonButton();
             this.SuspendLayout();
             // 
             // DataBtn
@@ -428,7 +429,7 @@
             // ExtensionBtn
             // 
             this.ExtensionBtn.CornerRoundingRadius = -1F;
-            this.ExtensionBtn.Location = new System.Drawing.Point(245, 326);
+            this.ExtensionBtn.Location = new System.Drawing.Point(245, 328);
             this.ExtensionBtn.Name = "ExtensionBtn";
             this.ExtensionBtn.Size = new System.Drawing.Size(119, 25);
             this.ExtensionBtn.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
@@ -455,12 +456,28 @@
             this.ClearExtensionsBtn.Values.Text = "Clear Extension";
             this.ClearExtensionsBtn.Click += new System.EventHandler(this.ClearExtensionsBtn_Click);
             // 
+            // LoadExtensionBtn
+            // 
+            this.LoadExtensionBtn.CornerRoundingRadius = -1F;
+            this.LoadExtensionBtn.Location = new System.Drawing.Point(12, 365);
+            this.LoadExtensionBtn.Name = "LoadExtensionBtn";
+            this.LoadExtensionBtn.Size = new System.Drawing.Size(119, 25);
+            this.LoadExtensionBtn.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
+            this.LoadExtensionBtn.StateCommon.Back.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
+            this.LoadExtensionBtn.StateCommon.Content.ShortText.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.LoadExtensionBtn.StateCommon.Content.ShortText.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.LoadExtensionBtn.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.LoadExtensionBtn.TabIndex = 31;
+            this.LoadExtensionBtn.Values.Text = "Load Extensions";
+            this.LoadExtensionBtn.Click += new System.EventHandler(this.LoadExtensionBtn_Click);
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
             this.ClientSize = new System.Drawing.Size(384, 406);
+            this.Controls.Add(this.LoadExtensionBtn);
             this.Controls.Add(this.ClearExtensionsBtn);
             this.Controls.Add(this.ExtensionBtn);
             this.Controls.Add(this.ExtensionsTextBox);
@@ -532,5 +549,6 @@
         private Krypton.Toolkit.KryptonTextBox ExtensionsTextBox;
         private Krypton.Toolkit.KryptonButton ExtensionBtn;
         private Krypton.Toolkit.KryptonButton ClearExtensionsBtn;
+        private Krypton.Toolkit.KryptonButton LoadExtensionBtn;
     }
 }

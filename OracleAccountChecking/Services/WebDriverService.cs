@@ -12,6 +12,10 @@ namespace OracleAccountChecking.Services
         public static async Task<bool> CheckTenant(UndetectedChromeDriver driver, string accountName, CancellationToken token)
         {
             driver.GoToUrl("https://www.oracle.com/cloud/sign-in.html");
+            await Task.Delay(3000, token).ConfigureAwait(false);
+
+            await HandleCookieAccept(driver, token).ConfigureAwait(false);
+
             var accountNameElm = driver.FindElement("#cloudAccountName", DefaultTimeout, token);
             driver.Sendkeys(accountNameElm, accountName, true, 5, token);
             await Task.Delay(3000, token).ConfigureAwait(false);
@@ -30,6 +34,26 @@ namespace OracleAccountChecking.Services
             catch
             {
                 return !driver.Url.Contains("cloud/sign-in.html");
+            }
+        }
+
+        private static async Task HandleCookieAccept(UndetectedChromeDriver driver, CancellationToken token)
+        {
+            try
+            {
+                var iframe = driver.FindElement(@"iframe[name=""trustarc_cm""]", DefaultTimeout / 2, token);
+                driver.SwitchTo().Frame(iframe);
+                await Task.Delay(3000, token).ConfigureAwait(false);
+
+                var acceptBtn = driver.FindElement("a.call", DefaultTimeout, token);
+                driver.Click(acceptBtn, 5, token);
+                await Task.Delay(3000, token).ConfigureAwait(false);
+
+                driver.SwitchTo().DefaultContent();
+            }
+            catch (Exception ex)
+            {
+                DataHandler.WriteLog(ex);
             }
         }
 
@@ -114,11 +138,14 @@ namespace OracleAccountChecking.Services
                 for (var i = 1; i <= 3; i++)
                 {
                     var loginEndTime = DateTime.Now.AddSeconds(DefaultTimeout / 3);
-                    while (!driver.Url.Contains("cloud.oracle.com/?region")
-                        && loginEndTime > DateTime.Now) await Task.Delay(3000, token).ConfigureAwait(false);
+                    while (driver.Url.Contains("oraclecloud.com/ui/v1/signin") && loginEndTime > DateTime.Now) 
+                        await Task.Delay(3000, token).ConfigureAwait(false);
 
                     if (driver.Url.Contains("cloud.oracle.com/?region"))
                         return Tuple.Create(true, string.Empty);
+
+                    if (driver.Url.Contains("ui/v1/pwdmustchange"))
+                        return Tuple.Create(true, "pwdmustchange");
 
                     var loginSuccess = CheckValidLogin(driver, token);
                     if (!loginSuccess) return Tuple.Create(false, "invalid email or password");

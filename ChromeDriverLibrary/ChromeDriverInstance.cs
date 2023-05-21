@@ -1,5 +1,4 @@
-﻿using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
+﻿using OpenQA.Selenium.Chrome;
 using SeleniumUndetectedChromeDriver;
 using System.Diagnostics;
 
@@ -40,7 +39,7 @@ namespace ChromeDriverLibrary
                 }
 
                 var basePath = AppDomain.CurrentDomain.BaseDirectory;
-                options.AddArgument($"--load-extension={basePath}/chromedriver/bypasscookie");
+                //options.AddArgument($"--load-extension={basePath}/chromedriver/bypasscookie");
                 extensionPaths?.ForEach(path => options.AddArgument($"--load-extension={path}"));
 
                 if (proxyInfo.Count == 4) options.AddArgument($"--load-extension={basePath}/chromedriver/proxyauth");

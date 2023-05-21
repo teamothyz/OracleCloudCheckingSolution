@@ -54,12 +54,12 @@ namespace OracleAccountChecking
             var currentTitle = Text;
             if (Accounts.Count == 0)
             {
-                MessageBox.Show("Vui lòng nhập dữ liệu", "Cảnh báo");
+                MessageBox.Show(this, "Vui lòng nhập dữ liệu", "Cảnh báo");
                 return;
             }
             if (UseProxy && Proxies.Count == 0)
             {
-                MessageBox.Show("Vui lòng nhập proxy", "Cảnh báo");
+                MessageBox.Show(this, "Vui lòng nhập proxy", "Cảnh báo");
                 return;
             }
             EnableBtn(true);
@@ -68,7 +68,7 @@ namespace OracleAccountChecking
                 Invoke(() =>
                 {
                     Text = $"{currentTitle} - Running...!";
-                    MessageBox.Show("Chương trình bắt đầu", "Thông báo");
+                    MessageBox.Show(this, "Chương trình bắt đầu", "Thông báo");
                 });
 
                 proxyIndex = 0;
@@ -96,7 +96,7 @@ namespace OracleAccountChecking
                 Invoke(() =>
                 {
                     Text = currentTitle;
-                    MessageBox.Show("Chương trình đã dừng lại", "Thông báo");
+                    MessageBox.Show(this, "Chương trình đã dừng lại", "Thông báo");
                 });
                 EnableBtn(false);
             }
@@ -221,6 +221,19 @@ namespace OracleAccountChecking
                     }
                     return;
                 }
+                else if (loginRs.Item1 && loginRs.Item2 == "pwdmustchange")
+                {
+                    DataHandler.WriteSuccessData(account, new List<string> { "pwdmustchange" });
+                    lock (CountModel)
+                    {
+                        Invoke(() =>
+                        {
+                            CountModel.Success++;
+                            CountModel.Remaining--;
+                        });
+                    }
+                    return;
+                }
 
                 var bills = await WebDriverService.GetBilling(driver, token);
                 DataHandler.WriteSuccessData(account, bills);
@@ -273,6 +286,7 @@ namespace OracleAccountChecking
                 TimeoutInput.Enabled = !isRun;
                 ClearExtensionsBtn.Enabled = !isRun;
                 ExtensionBtn.Enabled = !isRun;
+                LoadExtensionBtn.Enabled = !isRun;
 
                 StopBtn.Enabled = isRun;
                 ForceStopBtn.Enabled = isRun;
@@ -296,7 +310,7 @@ namespace OracleAccountChecking
                     CountModel.Success = 0;
                     CountModel.Failed = 0;
                     CountModel.Remaining = Accounts.Count;
-                    MessageBox.Show("Đọc dữ liệu xong", "Thông báo");
+                    MessageBox.Show(this, "Đọc dữ liệu xong", "Thông báo");
                 });
             }
         }
@@ -315,7 +329,7 @@ namespace OracleAccountChecking
                 Invoke(() =>
                 {
                     ProxyTextBox.Text = Proxies.Count.ToString();
-                    MessageBox.Show("Đọc danh sách proxy xong", "Thông báo");
+                    MessageBox.Show(this, "Đọc danh sách proxy xong", "Thông báo");
                 });
             }
         }
@@ -381,6 +395,15 @@ namespace OracleAccountChecking
         {
             ActiveControl = TotalTextBox;
             ExtensionPaths.Clear();
+            Invoke(() => ExtensionsTextBox.Text = ExtensionPaths.Count.ToString());
+        }
+
+        private void LoadExtensionBtn_Click(object sender, EventArgs e)
+        {
+            ActiveControl = TotalTextBox;
+            ExtensionPaths.Clear();
+            var basePath = $"{AppDomain.CurrentDomain.BaseDirectory}/extensions";
+            if (Directory.Exists(basePath)) ExtensionPaths.AddRange(Directory.GetDirectories(basePath));
             Invoke(() => ExtensionsTextBox.Text = ExtensionPaths.Count.ToString());
         }
     }
