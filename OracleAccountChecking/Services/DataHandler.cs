@@ -1,4 +1,5 @@
-﻿using OracleAccountChecking.Models;
+﻿using Newtonsoft.Json;
+using OracleAccountChecking.Models;
 
 namespace OracleAccountChecking.Services
 {
@@ -9,6 +10,50 @@ namespace OracleAccountChecking.Services
         private static readonly object lockSuccess = new();
         private static readonly object lockFailed = new();
         private static readonly object lockLogs = new();
+        private static readonly object lockInfo = new();
+
+        //public static LastRunInfo GetLastInfo()
+        //{
+        //    lock (lockInfo)
+        //    {
+        //        var basePath = AppDomain.CurrentDomain.BaseDirectory;
+        //        var info = new LastRunInfo
+        //        {
+        //            Start = 0,
+        //            Total = 0
+        //        };
+        //        try
+        //        {
+        //            var filePath = Path.Combine(basePath, "last.txt");
+        //            if (!File.Exists(filePath)) return info;
+
+        //            using var reader = new StreamReader(filePath);
+        //            var data = reader.ReadToEnd();
+        //            var temp = JsonConvert.DeserializeObject<LastRunInfo>(data);
+        //            if (temp != null) info = temp;
+        //            reader.Close();
+        //        }
+        //        catch { }
+        //        return info;
+        //    }
+        //}
+
+        public static void WriteLastInfo(LastRunInfo info, string fileName)
+        {
+            lock (lockInfo)
+            {
+                var basePath = AppDomain.CurrentDomain.BaseDirectory;
+                try
+                {
+                    var folder = Path.Combine(basePath, "last");
+                    if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+                    var filePath = Path.Combine(folder, $"{fileName}_{info.Total + info.Start}_{DateTime.Now:HHmmss}_{DateTime.Now:ddMMyyyy}");
+                    using var stream = File.Create(filePath);
+                    stream.Close();
+                }
+                catch { }
+            }
+        }
 
         public static Queue<Account> ReadDataFile(string path)
         {
@@ -86,7 +131,7 @@ namespace OracleAccountChecking.Services
                     writer.Flush();
                     writer.Close();
                 }
-                catch (Exception ex) 
+                catch (Exception ex)
                 {
                     WriteLog(ex);
                 }

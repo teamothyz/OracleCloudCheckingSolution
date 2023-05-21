@@ -26,6 +26,9 @@ namespace OracleAccountChecking
 
         private readonly List<string> ExtensionPaths;
 
+        private readonly LastRunInfo LastInfo;
+        private string LastFileName;
+
         public FrmMain()
         {
             InitializeComponent();
@@ -46,12 +49,14 @@ namespace OracleAccountChecking
 
             HeightCount = Screen.PrimaryScreen.Bounds.Height / 500;
             WidthCount = Screen.PrimaryScreen.Bounds.Width / 375;
+
+            LastFileName = string.Empty;
+            LastInfo = new LastRunInfo { Total = 0, Start = 0 };
         }
 
         private async void StartBtn_Click(object sender, EventArgs e)
         {
             ActiveControl = TotalTextBox;
-            var currentTitle = Text;
             if (Accounts.Count == 0)
             {
                 MessageBox.Show(this, "Vui lòng nhập dữ liệu", "Cảnh báo");
@@ -67,7 +72,8 @@ namespace OracleAccountChecking
             {
                 Invoke(() =>
                 {
-                    Text = $"{currentTitle} - Running...!";
+                    StatusTextBox.StateCommon.Back.Color1 = Color.FromArgb(0, 192, 0);
+                    StatusTextBox.Text = "Đang chạy";
                     MessageBox.Show(this, "Chương trình bắt đầu", "Thông báo");
                 });
 
@@ -78,6 +84,20 @@ namespace OracleAccountChecking
                 var totalThread = Accounts.Count > TotalThreads ? TotalThreads : Accounts.Count;
 
                 var forceToken = ForceCancelToken.Token;
+                var needDeleted = LastInfo.Start;
+                await Task.Run(() =>
+                {
+                    for (var i = 0; i < needDeleted; i++)
+                    {
+                        _ = Accounts.Dequeue();
+                        Invoke(() => CountModel.Remaining--);
+                    }
+                    Invoke(() =>
+                    {
+                        CountModel.Remaining -= needDeleted;
+                    });
+                });
+
                 for (var i = 0; i < totalThread; i++)
                 {
                     var token = CancelToken.Token;
@@ -95,10 +115,13 @@ namespace OracleAccountChecking
             {
                 Invoke(() =>
                 {
-                    Text = currentTitle;
+                    LastInfo.Start = 0;
+                    StatusTextBox.StateCommon.Back.Color1 = Color.FromArgb(192, 0, 0);
+                    StatusTextBox.Text = "Đã dừng";
                     MessageBox.Show(this, "Chương trình đã dừng lại", "Thông báo");
                 });
                 EnableBtn(false);
+                await Task.Run(() => DataHandler.WriteLastInfo(LastInfo, LastFileName));
             }
         }
 
@@ -148,9 +171,10 @@ namespace OracleAccountChecking
                         continue;
                     }
                     await CheckAccount(account, driver, token);
+                    Invoke(() => LastInfo.Total++);
                     completed = true;
-                    try { driver?.Quit(); } catch { }
 
+                    try { driver?.Quit(); driver?.Dispose(); } catch { }
                     await Task.Delay(3000, token).ConfigureAwait(false);
                 }
             }
@@ -166,6 +190,7 @@ namespace OracleAccountChecking
                         {
                             CountModel.Failed++;
                             CountModel.Remaining--;
+                            LastInfo.Total++;
                         });
                     }
                 }
@@ -287,9 +312,9 @@ namespace OracleAccountChecking
                 ClearExtensionsBtn.Enabled = !isRun;
                 ExtensionBtn.Enabled = !isRun;
                 LoadExtensionBtn.Enabled = !isRun;
+                StartPointInput.Enabled = !isRun;
 
                 StopBtn.Enabled = isRun;
-                ForceStopBtn.Enabled = isRun;
             });
         }
 
@@ -304,8 +329,10 @@ namespace OracleAccountChecking
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 Accounts = await Task.Run(() => DataHandler.ReadDataFile(dialog.FileName)).ConfigureAwait(false);
+                LastFileName = Path.GetFileName(dialog.FileName);
                 Invoke(() =>
                 {
+                    LastInfo.Total = 0;
                     CountModel.Total = Accounts.Count;
                     CountModel.Success = 0;
                     CountModel.Failed = 0;
@@ -370,8 +397,8 @@ namespace OracleAccountChecking
         private void ForceStopBtn_Click(object sender, EventArgs e)
         {
             ActiveControl = TotalTextBox;
-            ChromeDriverInstance.ForceKillAll();
             ForceCancelToken.Cancel();
+            ChromeDriverInstance.ForceKillAll();
         }
 
         private void TimeoutInput_ValueChanged(object sender, EventArgs e)
@@ -405,6 +432,11 @@ namespace OracleAccountChecking
             var basePath = $"{AppDomain.CurrentDomain.BaseDirectory}/extensions";
             if (Directory.Exists(basePath)) ExtensionPaths.AddRange(Directory.GetDirectories(basePath));
             Invoke(() => ExtensionsTextBox.Text = ExtensionPaths.Count.ToString());
+        }
+
+        private void StartPointInput_ValueChanged(object sender, EventArgs e)
+        {
+            LastInfo.Start = (int)StartPointInput.Value;
         }
     }
 }
