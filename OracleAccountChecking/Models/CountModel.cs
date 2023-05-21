@@ -7,14 +7,14 @@ namespace OracleAccountChecking.Models
         private int total;
         private int success;
         private int failed;
-        private int remaining;
+        private int scanned;
 
         public CountModel()
         {
             total = 0;
             success = 0;
             failed = 0;
-            remaining = 0;
+            scanned = 0;
         }
 
         public int Total
@@ -47,13 +47,13 @@ namespace OracleAccountChecking.Models
             }
         }
 
-        public int Remaining
+        public int Scanned
         {
-            get => remaining;
+            get => scanned;
             set
             {
-                remaining = value;
-                NotifyPropertyChanged(nameof(remaining));
+                scanned = value;
+                NotifyPropertyChanged(nameof(Scanned));
             }
         }
 

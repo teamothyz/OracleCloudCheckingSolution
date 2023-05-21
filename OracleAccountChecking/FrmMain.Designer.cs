@@ -37,7 +37,7 @@
             this.TotalTextBox = new Krypton.Toolkit.KryptonTextBox();
             this.SuccessTextBox = new Krypton.Toolkit.KryptonTextBox();
             this.FailedTextBox = new Krypton.Toolkit.KryptonTextBox();
-            this.RemainTextBox = new Krypton.Toolkit.KryptonTextBox();
+            this.ScannedTextBox = new Krypton.Toolkit.KryptonTextBox();
             this.ProxyBtn = new Krypton.Toolkit.KryptonButton();
             this.StopBtn = new Krypton.Toolkit.KryptonButton();
             this.StartBtn = new Krypton.Toolkit.KryptonButton();
@@ -117,12 +117,12 @@
             // 
             this.kryptonLabel4.Location = new System.Drawing.Point(12, 132);
             this.kryptonLabel4.Name = "kryptonLabel4";
-            this.kryptonLabel4.Size = new System.Drawing.Size(96, 20);
+            this.kryptonLabel4.Size = new System.Drawing.Size(81, 20);
             this.kryptonLabel4.StateCommon.ShortText.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.kryptonLabel4.StateCommon.ShortText.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.kryptonLabel4.StateCommon.ShortText.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.kryptonLabel4.TabIndex = 4;
-            this.kryptonLabel4.Values.Text = "Chưa kiểm tra:";
+            this.kryptonLabel4.Values.Text = "Đã kiểm tra:";
             // 
             // TotalTextBox
             // 
@@ -130,7 +130,7 @@
             this.TotalTextBox.Name = "TotalTextBox";
             this.TotalTextBox.ReadOnly = true;
             this.TotalTextBox.Size = new System.Drawing.Size(100, 23);
-            this.TotalTextBox.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.TotalTextBox.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this.TotalTextBox.StateCommon.Content.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.TotalTextBox.TabIndex = 5;
             this.TotalTextBox.Text = "0";
@@ -142,7 +142,7 @@
             this.SuccessTextBox.Name = "SuccessTextBox";
             this.SuccessTextBox.ReadOnly = true;
             this.SuccessTextBox.Size = new System.Drawing.Size(100, 23);
-            this.SuccessTextBox.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.SuccessTextBox.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
             this.SuccessTextBox.StateCommon.Content.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.SuccessTextBox.TabIndex = 6;
             this.SuccessTextBox.Text = "0";
@@ -154,23 +154,23 @@
             this.FailedTextBox.Name = "FailedTextBox";
             this.FailedTextBox.ReadOnly = true;
             this.FailedTextBox.Size = new System.Drawing.Size(100, 23);
-            this.FailedTextBox.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+            this.FailedTextBox.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.FailedTextBox.StateCommon.Content.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.FailedTextBox.TabIndex = 7;
             this.FailedTextBox.Text = "0";
             this.FailedTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
-            // RemainTextBox
+            // ScannedTextBox
             // 
-            this.RemainTextBox.Location = new System.Drawing.Point(127, 132);
-            this.RemainTextBox.Name = "RemainTextBox";
-            this.RemainTextBox.ReadOnly = true;
-            this.RemainTextBox.Size = new System.Drawing.Size(100, 23);
-            this.RemainTextBox.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.RemainTextBox.StateCommon.Content.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.RemainTextBox.TabIndex = 8;
-            this.RemainTextBox.Text = "0";
-            this.RemainTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.ScannedTextBox.Location = new System.Drawing.Point(127, 132);
+            this.ScannedTextBox.Name = "ScannedTextBox";
+            this.ScannedTextBox.ReadOnly = true;
+            this.ScannedTextBox.Size = new System.Drawing.Size(100, 23);
+            this.ScannedTextBox.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
+            this.ScannedTextBox.StateCommon.Content.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.ScannedTextBox.TabIndex = 8;
+            this.ScannedTextBox.Text = "0";
+            this.ScannedTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // ProxyBtn
             // 
@@ -231,7 +231,7 @@
             // 
             // ThreadInput
             // 
-            this.ThreadInput.Location = new System.Drawing.Point(308, 94);
+            this.ThreadInput.Location = new System.Drawing.Point(293, 94);
             this.ThreadInput.Maximum = new decimal(new int[] {
             50,
             0,
@@ -243,8 +243,8 @@
             0,
             0});
             this.ThreadInput.Name = "ThreadInput";
-            this.ThreadInput.Size = new System.Drawing.Size(56, 22);
-            this.ThreadInput.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.ThreadInput.Size = new System.Drawing.Size(71, 22);
+            this.ThreadInput.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
             this.ThreadInput.StateCommon.Content.Color1 = System.Drawing.Color.Black;
             this.ThreadInput.StateCommon.Content.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.ThreadInput.TabIndex = 14;
@@ -261,7 +261,7 @@
             this.ProxyTextBox.Name = "ProxyTextBox";
             this.ProxyTextBox.ReadOnly = true;
             this.ProxyTextBox.Size = new System.Drawing.Size(100, 23);
-            this.ProxyTextBox.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.ProxyTextBox.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this.ProxyTextBox.StateCommon.Content.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.ProxyTextBox.TabIndex = 16;
             this.ProxyTextBox.Text = "0";
@@ -395,7 +395,7 @@
             0});
             this.TimeoutInput.Name = "TimeoutInput";
             this.TimeoutInput.Size = new System.Drawing.Size(100, 22);
-            this.TimeoutInput.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.TimeoutInput.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
             this.TimeoutInput.StateCommon.Content.Color1 = System.Drawing.Color.Black;
             this.TimeoutInput.StateCommon.Content.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.TimeoutInput.TabIndex = 26;
@@ -408,7 +408,7 @@
             // 
             // kryptonLabel9
             // 
-            this.kryptonLabel9.Location = new System.Drawing.Point(12, 331);
+            this.kryptonLabel9.Location = new System.Drawing.Point(12, 368);
             this.kryptonLabel9.Name = "kryptonLabel9";
             this.kryptonLabel9.Size = new System.Drawing.Size(76, 20);
             this.kryptonLabel9.StateCommon.ShortText.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
@@ -419,11 +419,11 @@
             // 
             // ExtensionsTextBox
             // 
-            this.ExtensionsTextBox.Location = new System.Drawing.Point(127, 328);
+            this.ExtensionsTextBox.Location = new System.Drawing.Point(127, 368);
             this.ExtensionsTextBox.Name = "ExtensionsTextBox";
             this.ExtensionsTextBox.ReadOnly = true;
             this.ExtensionsTextBox.Size = new System.Drawing.Size(100, 23);
-            this.ExtensionsTextBox.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.ExtensionsTextBox.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this.ExtensionsTextBox.StateCommon.Content.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.ExtensionsTextBox.TabIndex = 28;
             this.ExtensionsTextBox.Text = "0";
@@ -476,7 +476,7 @@
             // 
             // kryptonLabel11
             // 
-            this.kryptonLabel11.Location = new System.Drawing.Point(13, 371);
+            this.kryptonLabel11.Location = new System.Drawing.Point(12, 328);
             this.kryptonLabel11.Name = "kryptonLabel11";
             this.kryptonLabel11.Size = new System.Drawing.Size(75, 20);
             this.kryptonLabel11.StateCommon.ShortText.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
@@ -502,7 +502,7 @@
             this.StatusTextBox.Name = "StatusTextBox";
             this.StatusTextBox.ReadOnly = true;
             this.StatusTextBox.Size = new System.Drawing.Size(100, 23);
-            this.StatusTextBox.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.StatusTextBox.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this.StatusTextBox.StateCommon.Content.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.StatusTextBox.TabIndex = 37;
             this.StatusTextBox.Text = "Chưa bắt đầu";
@@ -510,7 +510,7 @@
             // 
             // StartPointInput
             // 
-            this.StartPointInput.Location = new System.Drawing.Point(127, 371);
+            this.StartPointInput.Location = new System.Drawing.Point(127, 328);
             this.StartPointInput.Maximum = new decimal(new int[] {
             999999999,
             0,
@@ -518,11 +518,10 @@
             0});
             this.StartPointInput.Name = "StartPointInput";
             this.StartPointInput.Size = new System.Drawing.Size(100, 22);
-            this.StartPointInput.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.StartPointInput.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
             this.StartPointInput.StateCommon.Content.Color1 = System.Drawing.Color.Black;
             this.StartPointInput.StateCommon.Content.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.StartPointInput.TabIndex = 38;
-            this.StartPointInput.ValueChanged += new System.EventHandler(this.StartPointInput_ValueChanged);
             // 
             // FrmMain
             // 
@@ -555,7 +554,7 @@
             this.Controls.Add(this.StartBtn);
             this.Controls.Add(this.StopBtn);
             this.Controls.Add(this.ProxyBtn);
-            this.Controls.Add(this.RemainTextBox);
+            this.Controls.Add(this.ScannedTextBox);
             this.Controls.Add(this.FailedTextBox);
             this.Controls.Add(this.SuccessTextBox);
             this.Controls.Add(this.TotalTextBox);
@@ -585,7 +584,7 @@
         private Krypton.Toolkit.KryptonTextBox TotalTextBox;
         private Krypton.Toolkit.KryptonTextBox SuccessTextBox;
         private Krypton.Toolkit.KryptonTextBox FailedTextBox;
-        private Krypton.Toolkit.KryptonTextBox RemainTextBox;
+        private Krypton.Toolkit.KryptonTextBox ScannedTextBox;
         private Krypton.Toolkit.KryptonButton ProxyBtn;
         private Krypton.Toolkit.KryptonButton StopBtn;
         private Krypton.Toolkit.KryptonButton StartBtn;

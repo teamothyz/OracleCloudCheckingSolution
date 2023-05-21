@@ -26,7 +26,6 @@ namespace OracleAccountChecking
 
         private readonly List<string> ExtensionPaths;
 
-        private readonly LastRunInfo LastInfo;
         private string LastFileName;
 
         public FrmMain()
@@ -43,15 +42,13 @@ namespace OracleAccountChecking
             TotalTextBox.DataBindings.Add("Text", CountModel, "Total");
             SuccessTextBox.DataBindings.Add("Text", CountModel, "Success");
             FailedTextBox.DataBindings.Add("Text", CountModel, "Failed");
-            RemainTextBox.DataBindings.Add("Text", CountModel, "Remaining");
+            ScannedTextBox.DataBindings.Add("Text", CountModel, "Scanned");
 
             ActiveControl = TotalTextBox;
 
             HeightCount = Screen.PrimaryScreen.Bounds.Height / 500;
             WidthCount = Screen.PrimaryScreen.Bounds.Width / 375;
-
             LastFileName = string.Empty;
-            LastInfo = new LastRunInfo { Total = 0, Start = 0 };
         }
 
         private async void StartBtn_Click(object sender, EventArgs e)
@@ -68,6 +65,7 @@ namespace OracleAccountChecking
                 return;
             }
             EnableBtn(true);
+            var needDeleted = (int)StartPointInput.Value;
             try
             {
                 Invoke(() =>
@@ -84,18 +82,13 @@ namespace OracleAccountChecking
                 var totalThread = Accounts.Count > TotalThreads ? TotalThreads : Accounts.Count;
 
                 var forceToken = ForceCancelToken.Token;
-                var needDeleted = LastInfo.Start;
                 await Task.Run(() =>
                 {
                     for (var i = 0; i < needDeleted; i++)
                     {
                         _ = Accounts.Dequeue();
-                        Invoke(() => CountModel.Remaining--);
                     }
-                    Invoke(() =>
-                    {
-                        CountModel.Remaining -= needDeleted;
-                    });
+                    Invoke(() => CountModel.Scanned += needDeleted);
                 });
 
                 for (var i = 0; i < totalThread; i++)
@@ -113,15 +106,15 @@ namespace OracleAccountChecking
             }
             finally
             {
+                await Task.Run(() => DataHandler.WriteLastInfo(CountModel.Scanned, LastFileName));
                 Invoke(() =>
                 {
-                    LastInfo.Start = 0;
+                    StartPointInput.Value = 0;
                     StatusTextBox.StateCommon.Back.Color1 = Color.FromArgb(192, 0, 0);
                     StatusTextBox.Text = "Đã dừng";
                     MessageBox.Show(this, "Chương trình đã dừng lại", "Thông báo");
                 });
                 EnableBtn(false);
-                await Task.Run(() => DataHandler.WriteLastInfo(LastInfo, LastFileName));
             }
         }
 
@@ -171,7 +164,6 @@ namespace OracleAccountChecking
                         continue;
                     }
                     await CheckAccount(account, driver, token);
-                    Invoke(() => LastInfo.Total++);
                     completed = true;
 
                     try { driver?.Quit(); driver?.Dispose(); } catch { }
@@ -189,8 +181,7 @@ namespace OracleAccountChecking
                         Invoke(() =>
                         {
                             CountModel.Failed++;
-                            CountModel.Remaining--;
-                            LastInfo.Total++;
+                            CountModel.Scanned++;
                         });
                     }
                 }
@@ -211,7 +202,7 @@ namespace OracleAccountChecking
                         Invoke(() =>
                         {
                             CountModel.Failed++;
-                            CountModel.Remaining--;
+                            CountModel.Scanned++;
                         });
                     }
                     return;
@@ -226,7 +217,7 @@ namespace OracleAccountChecking
                         Invoke(() =>
                         {
                             CountModel.Failed++;
-                            CountModel.Remaining--;
+                            CountModel.Scanned++;
                         });
                     }
                     return;
@@ -241,7 +232,7 @@ namespace OracleAccountChecking
                         Invoke(() =>
                         {
                             CountModel.Failed++;
-                            CountModel.Remaining--;
+                            CountModel.Scanned++;
                         });
                     }
                     return;
@@ -254,7 +245,7 @@ namespace OracleAccountChecking
                         Invoke(() =>
                         {
                             CountModel.Success++;
-                            CountModel.Remaining--;
+                            CountModel.Scanned++;
                         });
                     }
                     return;
@@ -267,7 +258,7 @@ namespace OracleAccountChecking
                     Invoke(() =>
                     {
                         CountModel.Success++;
-                        CountModel.Remaining--;
+                        CountModel.Scanned++;
                     });
                 }
             }
@@ -278,7 +269,7 @@ namespace OracleAccountChecking
                     Invoke(() =>
                     {
                         CountModel.Failed++;
-                        CountModel.Remaining--;
+                        CountModel.Scanned++;
                     });
                 }
                 DataHandler.WriteLog(ex);
@@ -332,11 +323,11 @@ namespace OracleAccountChecking
                 LastFileName = Path.GetFileName(dialog.FileName);
                 Invoke(() =>
                 {
-                    LastInfo.Total = 0;
+                    StartPointInput.Value = 0;
                     CountModel.Total = Accounts.Count;
                     CountModel.Success = 0;
                     CountModel.Failed = 0;
-                    CountModel.Remaining = Accounts.Count;
+                    CountModel.Scanned = 0;
                     MessageBox.Show(this, "Đọc dữ liệu xong", "Thông báo");
                 });
             }
@@ -398,6 +389,7 @@ namespace OracleAccountChecking
         {
             ActiveControl = TotalTextBox;
             ForceCancelToken.Cancel();
+            StopBtn_Click(sender, e);
             ChromeDriverInstance.ForceKillAll();
         }
 
@@ -432,11 +424,6 @@ namespace OracleAccountChecking
             var basePath = $"{AppDomain.CurrentDomain.BaseDirectory}/extensions";
             if (Directory.Exists(basePath)) ExtensionPaths.AddRange(Directory.GetDirectories(basePath));
             Invoke(() => ExtensionsTextBox.Text = ExtensionPaths.Count.ToString());
-        }
-
-        private void StartPointInput_ValueChanged(object sender, EventArgs e)
-        {
-            LastInfo.Start = (int)StartPointInput.Value;
         }
     }
 }

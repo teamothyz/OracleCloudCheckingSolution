@@ -70,11 +70,14 @@ namespace ChromeDriverLibrary
                 var innerHtml = (string)driver.ExecuteScript("return arguments[0].innerHTML;", element);
                 if (innerHtml == content) return true;
 
-                throw new WebDriverException("content does not match");
+                var innerText = (string)driver.ExecuteScript("return arguments[0].innerText;", element);
+                if (innerText == content) return true;
+
+                throw new InvalidElementStateException("content does not match");
             }
             catch (Exception ex)
             {
-                throw new WebDriverException(ex.Message);
+                throw new InvalidElementStateException(ex.Message);
             }
         }
 
@@ -86,6 +89,7 @@ namespace ChromeDriverLibrary
                 typeof(ElementNotInteractableException),
                 typeof(StaleElementReferenceException),
                 typeof(NoAlertPresentException),
+                typeof(InvalidElementStateException),
                 typeof(WebDriverTimeoutException));
 
             return wait;

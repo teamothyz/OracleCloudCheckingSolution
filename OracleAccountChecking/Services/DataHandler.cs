@@ -38,7 +38,7 @@ namespace OracleAccountChecking.Services
         //    }
         //}
 
-        public static void WriteLastInfo(LastRunInfo info, string fileName)
+        public static void WriteLastInfo(int scanned, string fileName)
         {
             lock (lockInfo)
             {
@@ -47,7 +47,7 @@ namespace OracleAccountChecking.Services
                 {
                     var folder = Path.Combine(basePath, "last");
                     if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
-                    var filePath = Path.Combine(folder, $"{fileName}_{info.Total + info.Start}_{DateTime.Now:HHmmss}_{DateTime.Now:ddMMyyyy}");
+                    var filePath = Path.Combine(folder, $"{fileName}_{scanned}_{DateTime.Now:HHmmss}_{DateTime.Now:ddMMyyyy}");
                     using var stream = File.Create(filePath);
                     stream.Close();
                 }
