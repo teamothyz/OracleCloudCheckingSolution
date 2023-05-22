@@ -191,7 +191,7 @@
             // 
             this.StopBtn.CornerRoundingRadius = -1F;
             this.StopBtn.Enabled = false;
-            this.StopBtn.Location = new System.Drawing.Point(245, 246);
+            this.StopBtn.Location = new System.Drawing.Point(245, 248);
             this.StopBtn.Name = "StopBtn";
             this.StopBtn.Size = new System.Drawing.Size(119, 25);
             this.StopBtn.StateCommon.Back.Color1 = System.Drawing.Color.Maroon;
@@ -357,7 +357,7 @@
             // ForceStopBtn
             // 
             this.ForceStopBtn.CornerRoundingRadius = -1F;
-            this.ForceStopBtn.Location = new System.Drawing.Point(245, 288);
+            this.ForceStopBtn.Location = new System.Drawing.Point(245, 291);
             this.ForceStopBtn.Name = "ForceStopBtn";
             this.ForceStopBtn.Size = new System.Drawing.Size(119, 25);
             this.ForceStopBtn.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
@@ -462,7 +462,7 @@
             // LoadExtensionBtn
             // 
             this.LoadExtensionBtn.CornerRoundingRadius = -1F;
-            this.LoadExtensionBtn.Location = new System.Drawing.Point(245, 371);
+            this.LoadExtensionBtn.Location = new System.Drawing.Point(245, 368);
             this.LoadExtensionBtn.Name = "LoadExtensionBtn";
             this.LoadExtensionBtn.Size = new System.Drawing.Size(119, 25);
             this.LoadExtensionBtn.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));

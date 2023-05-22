@@ -166,8 +166,7 @@ namespace OracleAccountChecking
                     await CheckAccount(account, driver, token);
                     completed = true;
 
-                    try { driver?.Quit(); driver?.Dispose(); } catch { }
-                    await Task.Delay(3000, token).ConfigureAwait(false);
+                    if (driver != null) await ChromeDriverInstance.Close(driver).ConfigureAwait(false);
                 }
             }
             catch (Exception ex)
@@ -275,10 +274,7 @@ namespace OracleAccountChecking
                 DataHandler.WriteLog(ex);
                 DataHandler.WriteFailedData(account, ex.Message);
             }
-            finally
-            {
-                try { driver?.Quit(); } catch { }
-            }
+            finally { await ChromeDriverInstance.Close(driver).ConfigureAwait(false); }
         }
 
         private void StopBtn_Click(object sender, EventArgs e)

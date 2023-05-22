@@ -6,6 +6,8 @@ namespace ChromeDriverLibrary
 {
     public class ChromeDriverInstance
     {
+        private static readonly object _lockUserDir = new();
+
         public static UndetectedChromeDriver? GetInstance(int positionX, int positionY,
             string? proxy = null, bool isHeadless = true,
             List<string>? extensionPaths = null, CancellationToken? token = null)
@@ -43,8 +45,12 @@ namespace ChromeDriverLibrary
                 extensionPaths?.ForEach(path => options.AddArgument($"--load-extension={path}"));
 
                 if (proxyInfo.Count == 4) options.AddArgument($"--load-extension={basePath}/chromedriver/proxyauth");
+                options.AddArgument("--incognito");
+                options.AddArgument("--blink-settings=imagesEnabled=false");
 
+                //var userDataDir = GetUserDir();
                 driver = UndetectedChromeDriver.Create(driverExecutablePath: "chromedriver/chromedriver.exe",
+                    //userDataDir: userDataDir,
                     headless: isHeadless,
                     hideCommandPromptWindow: true,
                     options: options);
@@ -76,6 +82,36 @@ namespace ChromeDriverLibrary
                 if (driver != null) try { driver.Quit(); } catch { }
                 return null;
             }
+        }
+
+        private static string GetUserDir()
+        {
+            var basePath = AppDomain.CurrentDomain.BaseDirectory;
+            var folder = Path.Combine(basePath, "profiles");
+            var container = Path.Combine(folder, Guid.NewGuid().ToString());
+            if (!Directory.Exists(folder))
+            {
+                lock (_lockUserDir)
+                {
+                    if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+                }
+            }
+            Directory.CreateDirectory(container);
+            return container;
+        }
+
+        public static async Task Close(UndetectedChromeDriver? driver)
+        {
+            try
+            {
+                driver?.Close();
+                await Task.Delay(1000).ConfigureAwait(false);
+                driver?.Quit();
+                await Task.Delay(1000).ConfigureAwait(false);
+                driver?.Dispose();
+                await Task.Delay(1000).ConfigureAwait(false);
+            }
+            catch { }
         }
 
         public static void ForceKillAll()

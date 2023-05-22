@@ -1,3 +1,5 @@
+using ChromeDriverLibrary;
+
 namespace OracleAccountChecking
 {
     internal static class Program
