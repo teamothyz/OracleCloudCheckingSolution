@@ -63,6 +63,8 @@
             this.kryptonLabel12 = new Krypton.Toolkit.KryptonLabel();
             this.StatusTextBox = new Krypton.Toolkit.KryptonTextBox();
             this.StartPointInput = new Krypton.Toolkit.KryptonNumericUpDown();
+            this.PrivateModeBtn = new Krypton.Toolkit.KryptonCheckBox();
+            this.DisableImgBtn = new Krypton.Toolkit.KryptonCheckBox();
             this.SuspendLayout();
             // 
             // DataBtn
@@ -191,7 +193,7 @@
             // 
             this.StopBtn.CornerRoundingRadius = -1F;
             this.StopBtn.Enabled = false;
-            this.StopBtn.Location = new System.Drawing.Point(245, 248);
+            this.StopBtn.Location = new System.Drawing.Point(245, 291);
             this.StopBtn.Name = "StopBtn";
             this.StopBtn.Size = new System.Drawing.Size(119, 25);
             this.StopBtn.StateCommon.Back.Color1 = System.Drawing.Color.Maroon;
@@ -206,7 +208,7 @@
             // StartBtn
             // 
             this.StartBtn.CornerRoundingRadius = -1F;
-            this.StartBtn.Location = new System.Drawing.Point(245, 208);
+            this.StartBtn.Location = new System.Drawing.Point(245, 255);
             this.StartBtn.Name = "StartBtn";
             this.StartBtn.Size = new System.Drawing.Size(119, 25);
             this.StartBtn.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
@@ -344,7 +346,7 @@
             // 
             this.TopMostBtn.Checked = true;
             this.TopMostBtn.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.TopMostBtn.Location = new System.Drawing.Point(245, 170);
+            this.TopMostBtn.Location = new System.Drawing.Point(245, 163);
             this.TopMostBtn.Name = "TopMostBtn";
             this.TopMostBtn.Size = new System.Drawing.Size(79, 20);
             this.TopMostBtn.StateCommon.ShortText.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
@@ -357,7 +359,7 @@
             // ForceStopBtn
             // 
             this.ForceStopBtn.CornerRoundingRadius = -1F;
-            this.ForceStopBtn.Location = new System.Drawing.Point(245, 291);
+            this.ForceStopBtn.Location = new System.Drawing.Point(245, 328);
             this.ForceStopBtn.Name = "ForceStopBtn";
             this.ForceStopBtn.Size = new System.Drawing.Size(119, 25);
             this.ForceStopBtn.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
@@ -432,7 +434,7 @@
             // ExtensionBtn
             // 
             this.ExtensionBtn.CornerRoundingRadius = -1F;
-            this.ExtensionBtn.Location = new System.Drawing.Point(245, 328);
+            this.ExtensionBtn.Location = new System.Drawing.Point(245, 368);
             this.ExtensionBtn.Name = "ExtensionBtn";
             this.ExtensionBtn.Size = new System.Drawing.Size(119, 25);
             this.ExtensionBtn.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
@@ -447,7 +449,7 @@
             // ClearExtensionsBtn
             // 
             this.ClearExtensionsBtn.CornerRoundingRadius = -1F;
-            this.ClearExtensionsBtn.Location = new System.Drawing.Point(245, 409);
+            this.ClearExtensionsBtn.Location = new System.Drawing.Point(245, 447);
             this.ClearExtensionsBtn.Name = "ClearExtensionsBtn";
             this.ClearExtensionsBtn.Size = new System.Drawing.Size(119, 25);
             this.ClearExtensionsBtn.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
@@ -462,7 +464,7 @@
             // LoadExtensionBtn
             // 
             this.LoadExtensionBtn.CornerRoundingRadius = -1F;
-            this.LoadExtensionBtn.Location = new System.Drawing.Point(245, 368);
+            this.LoadExtensionBtn.Location = new System.Drawing.Point(245, 408);
             this.LoadExtensionBtn.Name = "LoadExtensionBtn";
             this.LoadExtensionBtn.Size = new System.Drawing.Size(119, 25);
             this.LoadExtensionBtn.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
@@ -523,12 +525,40 @@
             this.StartPointInput.StateCommon.Content.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.StartPointInput.TabIndex = 38;
             // 
+            // PrivateModeBtn
+            // 
+            this.PrivateModeBtn.Location = new System.Drawing.Point(245, 192);
+            this.PrivateModeBtn.Name = "PrivateModeBtn";
+            this.PrivateModeBtn.Size = new System.Drawing.Size(72, 20);
+            this.PrivateModeBtn.StateCommon.ShortText.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.PrivateModeBtn.StateCommon.ShortText.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.PrivateModeBtn.StateCommon.ShortText.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.PrivateModeBtn.TabIndex = 39;
+            this.PrivateModeBtn.Values.Text = "Ẩn danh";
+            this.PrivateModeBtn.CheckedChanged += new System.EventHandler(this.PrivateModeBtn_CheckedChanged);
+            // 
+            // DisableImgBtn
+            // 
+            this.DisableImgBtn.Checked = true;
+            this.DisableImgBtn.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.DisableImgBtn.Location = new System.Drawing.Point(245, 219);
+            this.DisableImgBtn.Name = "DisableImgBtn";
+            this.DisableImgBtn.Size = new System.Drawing.Size(106, 20);
+            this.DisableImgBtn.StateCommon.ShortText.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.DisableImgBtn.StateCommon.ShortText.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.DisableImgBtn.StateCommon.ShortText.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.DisableImgBtn.TabIndex = 40;
+            this.DisableImgBtn.Values.Text = "Disable Image";
+            this.DisableImgBtn.CheckedChanged += new System.EventHandler(this.DisableImgBtn_CheckedChanged);
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
-            this.ClientSize = new System.Drawing.Size(384, 451);
+            this.ClientSize = new System.Drawing.Size(384, 486);
+            this.Controls.Add(this.DisableImgBtn);
+            this.Controls.Add(this.PrivateModeBtn);
             this.Controls.Add(this.StartPointInput);
             this.Controls.Add(this.StatusTextBox);
             this.Controls.Add(this.kryptonLabel12);
@@ -565,8 +595,8 @@
             this.Controls.Add(this.DataBtn);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(400, 490);
-            this.MinimumSize = new System.Drawing.Size(400, 490);
+            this.MaximumSize = new System.Drawing.Size(400, 525);
+            this.MinimumSize = new System.Drawing.Size(400, 525);
             this.Name = "FrmMain";
             this.Text = "Oracle Scan - Tele: @lukaxsx";
             this.ResumeLayout(false);
@@ -610,5 +640,7 @@
         private Krypton.Toolkit.KryptonLabel kryptonLabel12;
         private Krypton.Toolkit.KryptonTextBox StatusTextBox;
         private Krypton.Toolkit.KryptonNumericUpDown StartPointInput;
+        private Krypton.Toolkit.KryptonCheckBox PrivateModeBtn;
+        private Krypton.Toolkit.KryptonCheckBox DisableImgBtn;
     }
 }

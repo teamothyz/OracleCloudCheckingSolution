@@ -16,6 +16,9 @@ namespace OracleAccountChecking
 
         private bool IsHeadless = true;
         private bool UseProxy = false;
+        private bool PrivateMode = false;
+        private bool DisableImg = true;
+
         private string ProxyPrefix = string.Empty;
 
         private int proxyIndex = 0;
@@ -91,12 +94,20 @@ namespace OracleAccountChecking
                     Invoke(() => CountModel.Scanned += needDeleted);
                 });
 
-                for (var i = 0; i < totalThread; i++)
+                while (Accounts.Count > 0)
                 {
-                    var token = CancelToken.Token;
-                    var index = i;
-                    var task = Task.Run(async () => await RunThread(index, token), forceToken);
-                    tasks.Add(task);
+                    if (CancelToken.IsCancellationRequested) break;
+                    for (var i = 0; i < totalThread; i++)
+                    {
+                        if (CancelToken.IsCancellationRequested) break;
+                        var token = CancelToken.Token;
+                        var index = i;
+                        var task = Task.Run(async () => await RunThread(index, token), forceToken);
+                        tasks.Add(task);
+                    }
+                    await Task.WhenAll(tasks);
+                    tasks.Clear();
+                    ChromeDriverInstance.ForceKillAll();
                 }
                 await Task.WhenAll(tasks);
             }
@@ -155,18 +166,22 @@ namespace OracleAccountChecking
                     }
                     if (account == null) return;
 
-                    driver = await Task.Run(() => ChromeDriverInstance.GetInstance(positionX: positionX, positionY: positionY,
-                        proxy: proxy, isHeadless: IsHeadless, extensionPaths: ExtensionPaths, token: token), token);
+                    var driverInfo = await Task.Run(() => ChromeDriverInstance.GetInstance(positionX: positionX, positionY: positionY,
+                        proxy: proxy, isHeadless: IsHeadless, extensionPaths: ExtensionPaths,
+                        disableImg: DisableImg, privateMode: PrivateMode, token: token), token);
+
+                    driver = driverInfo.Item1;
                     if (driver == null)
                     {
                         DataHandler.WriteLog(new Exception("can't create chrome driver"));
                         await Task.Delay(3000, token).ConfigureAwait(false);
                         continue;
                     }
-                    await CheckAccount(account, driver, token);
+                    await CheckAccount(account, driver, driverInfo.Item2, token);
                     completed = true;
 
-                    if (driver != null) await ChromeDriverInstance.Close(driver).ConfigureAwait(false);
+                    await ChromeDriverInstance.Close(driver, driverInfo.Item2).ConfigureAwait(false);
+                    return;
                 }
             }
             catch (Exception ex)
@@ -187,7 +202,7 @@ namespace OracleAccountChecking
             }
         }
 
-        private async Task CheckAccount(Account account, UndetectedChromeDriver driver, CancellationToken token)
+        private async Task CheckAccount(Account account, UndetectedChromeDriver driver, string userDir, CancellationToken token)
         {
             try
             {
@@ -195,7 +210,7 @@ namespace OracleAccountChecking
                 var checkTenant = await WebDriverService.CheckTenant(driver, accountName, token);
                 if (!checkTenant)
                 {
-                    DataHandler.WriteFailedData(account, "check tenant failed");
+                    DataHandler.WriteErrorData(account, "check tenant failed");
                     lock (CountModel)
                     {
                         Invoke(() =>
@@ -210,7 +225,7 @@ namespace OracleAccountChecking
                 var tenantRs = await WebDriverService.EnterTenant(driver, accountName, token);
                 if (!tenantRs.Item1)
                 {
-                    DataHandler.WriteFailedData(account, tenantRs.Item2);
+                    DataHandler.WriteErrorData(account, tenantRs.Item2);
                     lock (CountModel)
                     {
                         Invoke(() =>
@@ -274,7 +289,7 @@ namespace OracleAccountChecking
                 DataHandler.WriteLog(ex);
                 DataHandler.WriteFailedData(account, ex.Message);
             }
-            finally { await ChromeDriverInstance.Close(driver).ConfigureAwait(false); }
+            finally { await ChromeDriverInstance.Close(driver, userDir).ConfigureAwait(false); }
         }
 
         private void StopBtn_Click(object sender, EventArgs e)
@@ -300,6 +315,8 @@ namespace OracleAccountChecking
                 ExtensionBtn.Enabled = !isRun;
                 LoadExtensionBtn.Enabled = !isRun;
                 StartPointInput.Enabled = !isRun;
+                PrivateModeBtn.Enabled = !isRun;
+                DisableImgBtn.Enabled = !isRun;
 
                 StopBtn.Enabled = isRun;
             });
@@ -420,6 +437,16 @@ namespace OracleAccountChecking
             var basePath = $"{AppDomain.CurrentDomain.BaseDirectory}/extensions";
             if (Directory.Exists(basePath)) ExtensionPaths.AddRange(Directory.GetDirectories(basePath));
             Invoke(() => ExtensionsTextBox.Text = ExtensionPaths.Count.ToString());
+        }
+
+        private void PrivateModeBtn_CheckedChanged(object sender, EventArgs e)
+        {
+            PrivateMode = PrivateModeBtn.Checked;
+        }
+
+        private void DisableImgBtn_CheckedChanged(object sender, EventArgs e)
+        {
+            DisableImg = DisableImgBtn.Checked;
         }
     }
 }

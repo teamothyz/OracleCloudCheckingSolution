@@ -8,11 +8,12 @@ namespace ChromeDriverLibrary
     {
         private static readonly object _lockUserDir = new();
 
-        public static UndetectedChromeDriver? GetInstance(int positionX, int positionY,
+        public static Tuple<UndetectedChromeDriver?, string> GetInstance(int positionX, int positionY,
             string? proxy = null, bool isHeadless = true,
-            List<string>? extensionPaths = null, CancellationToken? token = null)
+            List<string>? extensionPaths = null, bool disableImg = true, bool privateMode = true, CancellationToken? token = null)
         {
             UndetectedChromeDriver? driver = null;
+            var userDataDir = GetUserDir();
             try
             {
                 token ??= CancellationToken.None;
@@ -45,12 +46,11 @@ namespace ChromeDriverLibrary
                 extensionPaths?.ForEach(path => options.AddArgument($"--load-extension={path}"));
 
                 if (proxyInfo.Count == 4) options.AddArgument($"--load-extension={basePath}/chromedriver/proxyauth");
-                options.AddArgument("--incognito");
-                options.AddArgument("--blink-settings=imagesEnabled=false");
+                if (privateMode) options.AddArgument("--incognito");
+                if (disableImg) options.AddArgument("--blink-settings=imagesEnabled=false");
 
-                //var userDataDir = GetUserDir();
                 driver = UndetectedChromeDriver.Create(driverExecutablePath: "chromedriver/chromedriver.exe",
-                    //userDataDir: userDataDir,
+                    userDataDir: userDataDir,
                     headless: isHeadless,
                     hideCommandPromptWindow: true,
                     options: options);
@@ -75,12 +75,12 @@ namespace ChromeDriverLibrary
                     $"localStorage['proxy_password'] = '{proxyInfo[3]}';" +
                     $"localStorage['proxy_retry'] = '2'");
                 }
-                return driver;
+                return new Tuple<UndetectedChromeDriver?, string>(driver, userDataDir);
             }
             catch
             {
-                if (driver != null) try { driver.Quit(); } catch { }
-                return null;
+                Close(driver, userDataDir).Wait();
+                return new Tuple<UndetectedChromeDriver?, string>(driver, string.Empty);
             }
         }
 
@@ -100,7 +100,7 @@ namespace ChromeDriverLibrary
             return container;
         }
 
-        public static async Task Close(UndetectedChromeDriver? driver)
+        public static async Task Close(UndetectedChromeDriver? driver, string folder)
         {
             try
             {
@@ -110,6 +110,12 @@ namespace ChromeDriverLibrary
                 await Task.Delay(1000).ConfigureAwait(false);
                 driver?.Dispose();
                 await Task.Delay(1000).ConfigureAwait(false);
+                Directory.Delete(folder, true);
+            }
+            catch { }
+            try
+            {
+                Directory.Delete(folder, true);
             }
             catch { }
         }
@@ -127,6 +133,13 @@ namespace ChromeDriverLibrary
                 process.WaitForExit();
             }
             catch { }
+            try
+            {
+                var basePath = AppDomain.CurrentDomain.BaseDirectory;
+                var folder = Path.Combine(basePath, "profiles");
+                Directory.Delete(folder, true);
+            }
+            catch {  }
         }
     }
 }

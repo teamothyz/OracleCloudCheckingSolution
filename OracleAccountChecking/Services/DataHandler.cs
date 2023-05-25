@@ -9,34 +9,9 @@ namespace OracleAccountChecking.Services
         private static readonly object lockProxy = new();
         private static readonly object lockSuccess = new();
         private static readonly object lockFailed = new();
+        private static readonly object lockError = new();
         private static readonly object lockLogs = new();
         private static readonly object lockInfo = new();
-
-        //public static LastRunInfo GetLastInfo()
-        //{
-        //    lock (lockInfo)
-        //    {
-        //        var basePath = AppDomain.CurrentDomain.BaseDirectory;
-        //        var info = new LastRunInfo
-        //        {
-        //            Start = 0,
-        //            Total = 0
-        //        };
-        //        try
-        //        {
-        //            var filePath = Path.Combine(basePath, "last.txt");
-        //            if (!File.Exists(filePath)) return info;
-
-        //            using var reader = new StreamReader(filePath);
-        //            var data = reader.ReadToEnd();
-        //            var temp = JsonConvert.DeserializeObject<LastRunInfo>(data);
-        //            if (temp != null) info = temp;
-        //            reader.Close();
-        //        }
-        //        catch { }
-        //        return info;
-        //    }
-        //}
 
         public static void WriteLastInfo(int scanned, string fileName)
         {
@@ -122,11 +97,42 @@ namespace OracleAccountChecking.Services
                 try
                 {
                     var basePath = AppDomain.CurrentDomain.BaseDirectory;
-                    var directoryPath = $"{basePath}/success";
+                    var directoryPath = $"{basePath}/output";
+                    var subDirectoryPath = $"{basePath}/output/success";
+
                     var fileName = $"{DateTime.Now:ddMMyyyy}success.txt";
                     if (!Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath);
-                    using var writer = new StreamWriter($"{directoryPath}/{fileName}", true);
+                    if (!Directory.Exists(subDirectoryPath)) Directory.CreateDirectory(subDirectoryPath);
+
+                    using var writer = new StreamWriter($"{subDirectoryPath}/{fileName}", true);
                     var data = $"{acc.Email}:{acc.Password}:{string.Join(";", bills)}";
+                    writer.WriteLine(data);
+                    writer.Flush();
+                    writer.Close();
+                }
+                catch (Exception ex)
+                {
+                    WriteLog(ex);
+                }
+            }
+        }
+
+        public static void WriteErrorData(Account acc, string reason)
+        {
+            lock (lockFailed)
+            {
+                try
+                {
+                    var basePath = AppDomain.CurrentDomain.BaseDirectory;
+                    var directoryPath = $"{basePath}/output";
+                    var subDirectoryPath = $"{basePath}/output/error";
+
+                    var fileName = $"{DateTime.Now:ddMMyyyy}error.txt";
+                    if (!Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath);
+                    if (!Directory.Exists(subDirectoryPath)) Directory.CreateDirectory(subDirectoryPath);
+
+                    using var writer = new StreamWriter($"{subDirectoryPath}/{fileName}", true);
+                    var data = $"{acc.Email}:{acc.Password}:{reason}";
                     writer.WriteLine(data);
                     writer.Flush();
                     writer.Close();
@@ -145,9 +151,13 @@ namespace OracleAccountChecking.Services
                 try
                 {
                     var basePath = AppDomain.CurrentDomain.BaseDirectory;
-                    var directoryPath = $"{basePath}/failed";
+                    var directoryPath = $"{basePath}/output";
+                    var subDirectoryPath = $"{basePath}/output/failed";
+
                     var fileName = $"{DateTime.Now:ddMMyyyy}failed.txt";
                     if (!Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath);
+                    if (!Directory.Exists(subDirectoryPath)) Directory.CreateDirectory(subDirectoryPath);
+
                     using var writer = new StreamWriter($"{directoryPath}/{fileName}", true);
                     var data = $"{acc.Email}:{acc.Password}:{reason}";
                     writer.WriteLine(data);
