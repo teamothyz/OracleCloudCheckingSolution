@@ -189,7 +189,7 @@ namespace OracleAccountChecking
                 DataHandler.WriteLog(ex);
                 if (completed == false && account != null)
                 {
-                    DataHandler.WriteFailedData(account, "failed caused by cancel scan");
+                    DataHandler.WriteErrorData(account, "failed caused by cancel scan");
                     lock (CountModel)
                     {
                         Invoke(() =>
@@ -287,7 +287,7 @@ namespace OracleAccountChecking
                     });
                 }
                 DataHandler.WriteLog(ex);
-                DataHandler.WriteFailedData(account, ex.Message);
+                DataHandler.WriteErrorData(account, ex.Message);
             }
             finally { await ChromeDriverInstance.Close(driver, userDir).ConfigureAwait(false); }
         }
