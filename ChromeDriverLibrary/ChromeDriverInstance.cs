@@ -42,10 +42,10 @@ namespace ChromeDriverLibrary
                 }
 
                 var basePath = AppDomain.CurrentDomain.BaseDirectory;
-                //options.AddArgument($"--load-extension={basePath}/chromedriver/bypasscookie");
-                extensionPaths?.ForEach(path => options.AddArgument($"--load-extension={path}"));
+                extensionPaths ??= new List<string>();
+                if (proxyInfo.Count == 4) extensionPaths.Add($"{basePath}/chromedriver/proxyauth");
+                if (extensionPaths.Count > 0) options.AddArguments($"--load-extension={string.Join(",", extensionPaths)}");
 
-                if (proxyInfo.Count == 4) options.AddArgument($"--load-extension={basePath}/chromedriver/proxyauth");
                 if (privateMode) options.AddArgument("--incognito");
                 if (disableImg) options.AddArgument("--blink-settings=imagesEnabled=false");
 
@@ -139,7 +139,7 @@ namespace ChromeDriverLibrary
                 var folder = Path.Combine(basePath, "profiles");
                 Directory.Delete(folder, true);
             }
-            catch {  }
+            catch { }
         }
     }
 }
