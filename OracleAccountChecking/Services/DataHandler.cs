@@ -119,7 +119,7 @@ namespace OracleAccountChecking.Services
 
         public static void WriteErrorData(Account acc, string reason)
         {
-            lock (lockFailed)
+            lock (lockError)
             {
                 try
                 {
@@ -158,7 +158,7 @@ namespace OracleAccountChecking.Services
                     if (!Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath);
                     if (!Directory.Exists(subDirectoryPath)) Directory.CreateDirectory(subDirectoryPath);
 
-                    using var writer = new StreamWriter($"{directoryPath}/{fileName}", true);
+                    using var writer = new StreamWriter($"{subDirectoryPath}/{fileName}", true);
                     var data = $"{acc.Email}:{acc.Password}:{reason}";
                     writer.WriteLine(data);
                     writer.Flush();
