@@ -2,6 +2,7 @@
 using ChromeDriverLibrary;
 using OpenQA.Selenium;
 using System.Text;
+using System.Xml.Linq;
 
 namespace OracleAccountChecking.Services
 {
@@ -64,7 +65,6 @@ namespace OracleAccountChecking.Services
                 var url = $"https://cloud.oracle.com/?tenant={accountName}";
                 driver.GoToUrl(url);
 
-                //check the existance of submit button (3mins)
                 for (var loop = 1; loop <= 6; loop++)
                 {
                     try
@@ -75,7 +75,6 @@ namespace OracleAccountChecking.Services
                         driver.Click(submitFederationBtn, 5, token);
                         await Task.Delay(3000, token).ConfigureAwait(false);
 
-                        //wait for redirect to login page (3mins)
                         for (var innerLoop = 1; innerLoop <= 3; innerLoop++)
                         {
                             var endTime = DateTime.Now.AddSeconds(DefaultTimeout / 3);
@@ -181,6 +180,11 @@ namespace OracleAccountChecking.Services
                 var url = "https://cloud.oracle.com/billing/subscriptions";
                 driver.GoToUrl(url);
                 await Task.Delay(1000, token).ConfigureAwait(false);
+
+                var region = driver.FindElement("span.region-header-name-text", DefaultTimeout, token);
+                await Task.Delay(1000, token).ConfigureAwait(false);
+                var innerText = (string)driver.ExecuteScript("return arguments[0].innerText;", region);
+                result.Add(innerText);
 
                 var iframe = driver.FindElement("#sandbox-billing-and-payments-container", DefaultTimeout, token);
                 driver.SwitchTo().Frame(iframe);

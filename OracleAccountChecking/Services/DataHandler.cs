@@ -105,7 +105,7 @@ namespace OracleAccountChecking.Services
                     if (!Directory.Exists(subDirectoryPath)) Directory.CreateDirectory(subDirectoryPath);
 
                     using var writer = new StreamWriter($"{subDirectoryPath}/{fileName}", true);
-                    var data = $"{acc.Email}:{acc.Password}:{string.Join(";", bills)}";
+                    var data = $"{acc.Email}:{acc.Password}:{string.Join(":", bills)}";
                     writer.WriteLine(data);
                     writer.Flush();
                     writer.Close();
