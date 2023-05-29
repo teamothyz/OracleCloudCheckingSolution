@@ -58,6 +58,13 @@ namespace ChromeDriverLibrary
                     options: options);
                 driver.Manage().Window.Position = new System.Drawing.Point(positionX, positionY);
                 driver.Manage().Window.Size = new System.Drawing.Size(375, 500);
+                Thread.Sleep(3000);
+                while (driver.WindowHandles.Count > 1)
+                {
+                    driver.Close();
+                    Thread.Sleep(1000);
+                    driver.SwitchTo().Window(driver.WindowHandles.First());
+                }
                 if (proxyInfo.Count == 4)
                 {
                     driver.SwitchTo().Window(driver.WindowHandles.First());
@@ -65,7 +72,7 @@ namespace ChromeDriverLibrary
                     Thread.Sleep(1000);
                     var findIdScript = "var done = arguments[0];" +
                         "chrome.management.getAll().then((res) => {" +
-                        "var ext = res.find(item => item.name = 'Proxy Auto Auth');" +
+                        "var ext = res.find(item => item.name == 'Proxy Auto Auth' && item.shortName == 'Proxy Auto Auth');" +
                         "var extId = ext ? ext.id : '';" +
                         "return done(extId);" +
                         "});";
