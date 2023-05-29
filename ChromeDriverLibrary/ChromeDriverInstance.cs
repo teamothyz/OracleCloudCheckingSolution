@@ -42,9 +42,11 @@ namespace ChromeDriverLibrary
                 }
 
                 var basePath = AppDomain.CurrentDomain.BaseDirectory;
-                extensionPaths ??= new List<string>();
-                if (proxyInfo.Count == 4) extensionPaths.Add($"{basePath}/chromedriver/proxyauth");
-                if (extensionPaths.Count > 0) options.AddArguments($"--load-extension={string.Join(",", extensionPaths)}");
+
+                var extensions = new List<string>();
+                extensions.AddRange(extensionPaths ?? new List<string>());
+                if (proxyInfo.Count == 4) extensions.Add($"{basePath}/chromedriver/proxyauth");
+                if (extensions.Count > 0) options.AddArguments($"--load-extension={string.Join(",", extensions)}");
 
                 if (privateMode) options.AddArgument("--incognito");
                 if (disableImg) options.AddArgument("--blink-settings=imagesEnabled=false");
