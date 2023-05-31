@@ -235,7 +235,7 @@
             // 
             this.ThreadInput.Location = new System.Drawing.Point(293, 94);
             this.ThreadInput.Maximum = new decimal(new int[] {
-            50,
+            999999999,
             0,
             0,
             0});

@@ -2,7 +2,6 @@
 using ChromeDriverLibrary;
 using OpenQA.Selenium;
 using System.Text;
-using System.Xml.Linq;
 
 namespace OracleAccountChecking.Services
 {
@@ -58,11 +57,11 @@ namespace OracleAccountChecking.Services
             }
         }
 
-        public static async Task<Tuple<bool, string>> EnterTenant(UndetectedChromeDriver driver, string accountName, CancellationToken token)
+        public static async Task<Tuple<bool, string>> EnterTenant(UndetectedChromeDriver driver, string email, string password, CancellationToken token)
         {
             try
             {
-                var url = $"https://cloud.oracle.com/?tenant={accountName}";
+                var url = $"https://cloud.oracle.com/?tenant={email.Split('@')[0]}";
                 driver.GoToUrl(url);
 
                 for (var loop = 1; loop <= 6; loop++)
@@ -95,6 +94,9 @@ namespace OracleAccountChecking.Services
 
                         if (driver.Url.Contains("identity.oraclecloud.com/ui/v1/signin"))
                             return Tuple.Create(true, string.Empty);
+
+                        var result = await CustomLogin(driver, email, password, token);
+                        if (result.Item2.Contains("[login]")) return result;
                         else continue;
                     }
                 }
@@ -107,6 +109,61 @@ namespace OracleAccountChecking.Services
                 DataHandler.WriteLog(ex);
                 return Tuple.Create(false, ex.Message);
             }
+        }
+
+        private static async Task<Tuple<bool, string>> CustomLogin(UndetectedChromeDriver driver, string email, string password, CancellationToken token)
+        {
+            var message = string.Empty;
+            try
+            {
+                var emailInputElm = driver.FindElement("#username", 5, token);
+                message = "[login]";
+                driver.Sendkeys(emailInputElm, email, true, 5, token);
+                await Task.Delay(1000, token).ConfigureAwait(false);
+
+                var passInputElm = driver.FindElement("#password", 5, token);
+                driver.Sendkeys(passInputElm, password, true, 5, token);
+                await Task.Delay(1000, token).ConfigureAwait(false);
+
+                var button = driver.FindElement("#submit-native", 5, token);
+                driver.Click(button, 5, token);
+
+                for (var i = 1; i <= 6; i++)
+                {
+                    var loginEndTime = DateTime.Now.AddSeconds(DefaultTimeout / 6);
+                    while (driver.Url.Contains("oraclecloud.com/v1/oauth2/authorize") && loginEndTime > DateTime.Now)
+                        await Task.Delay(3000, token).ConfigureAwait(false);
+
+                    if (driver.Url.Contains("cloud.oracle.com/?region"))
+                        return Tuple.Create(true, "[login]");
+
+                    if (driver.Url.Contains("ui/v1/pwdmustchange"))
+                        return Tuple.Create(true, "[login] pwdmustchange");
+
+                    var loginSuccess = CheckValidCustomLogin(driver, token);
+                    if (!loginSuccess) return Tuple.Create(false, "[login] invalid email or password");
+
+                    try { driver.Click(button, 1, token); } catch { }
+                }
+                var success = driver.Url.Contains("cloud.oracle.com/?region");
+                if (success) return Tuple.Create(true, "[login]");
+                else return Tuple.Create(false, "[login] failed");
+            }
+            catch (Exception ex)
+            {
+                DataHandler.WriteLog(ex);
+                return Tuple.Create(false, $"{message} {ex.Message}");
+            }
+        }
+
+        private static bool CheckValidCustomLogin(UndetectedChromeDriver driver, CancellationToken token)
+        {
+            try
+            {
+                _ = driver.FindElement(@"div[class=""error-message""]", 5, token);
+                return false;
+            }
+            catch { return true; }
         }
 
         private static bool CheckInvalidTenant(UndetectedChromeDriver driver, CancellationToken token)
@@ -137,7 +194,7 @@ namespace OracleAccountChecking.Services
                 for (var i = 1; i <= 3; i++)
                 {
                     var loginEndTime = DateTime.Now.AddSeconds(DefaultTimeout / 3);
-                    while (driver.Url.Contains("oraclecloud.com/ui/v1/signin") && loginEndTime > DateTime.Now) 
+                    while (driver.Url.Contains("oraclecloud.com/ui/v1/signin") && loginEndTime > DateTime.Now)
                         await Task.Delay(3000, token).ConfigureAwait(false);
 
                     if (driver.Url.Contains("cloud.oracle.com/?region"))

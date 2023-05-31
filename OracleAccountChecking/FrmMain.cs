@@ -206,6 +206,7 @@ namespace OracleAccountChecking
         {
             try
             {
+                var bills = new List<string>();
                 var accountName = account.Email.Split("@")[0];
                 var checkTenant = await WebDriverService.CheckTenant(driver, accountName, token);
                 if (!checkTenant)
@@ -222,8 +223,37 @@ namespace OracleAccountChecking
                     return;
                 }
 
-                var tenantRs = await WebDriverService.EnterTenant(driver, accountName, token);
-                if (!tenantRs.Item1)
+                var tenantRs = await WebDriverService.EnterTenant(driver, account.Email, account.Password, token);
+                if (tenantRs.Item2.Contains("[login]"))
+                {
+                    if (!tenantRs.Item1)
+                    {
+                        DataHandler.WriteFailedData(account, tenantRs.Item2);
+                        lock (CountModel)
+                        {
+                            Invoke(() =>
+                            {
+                                CountModel.Failed++;
+                                CountModel.Scanned++;
+                            });
+                        }
+                    }
+                    else
+                    {
+                        bills = await WebDriverService.GetBilling(driver, token);
+                        DataHandler.WriteSuccessData(account, bills);
+                        lock (CountModel)
+                        {
+                            Invoke(() =>
+                            {
+                                CountModel.Success++;
+                                CountModel.Scanned++;
+                            });
+                        }
+                    }
+                    return;
+                }
+                else if (!tenantRs.Item1)
                 {
                     DataHandler.WriteErrorData(account, tenantRs.Item2);
                     lock (CountModel)
@@ -265,7 +295,7 @@ namespace OracleAccountChecking
                     return;
                 }
 
-                var bills = await WebDriverService.GetBilling(driver, token);
+                bills = await WebDriverService.GetBilling(driver, token);
                 DataHandler.WriteSuccessData(account, bills);
                 lock (CountModel)
                 {
