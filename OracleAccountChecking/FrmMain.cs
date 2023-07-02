@@ -7,6 +7,8 @@ namespace OracleAccountChecking
 {
     public partial class FrmMain : Form
     {
+        public static bool ClickCookie { get; private set; } = false;
+
         private int TotalThreads = 20;
         private Queue<Account> Accounts;
         private List<string> Proxies;
@@ -347,6 +349,7 @@ namespace OracleAccountChecking
                 StartPointInput.Enabled = !isRun;
                 PrivateModeBtn.Enabled = !isRun;
                 DisableImgBtn.Enabled = !isRun;
+                ClickCookieCheckBox.Enabled = !isRun;
 
                 StopBtn.Enabled = isRun;
             });
@@ -477,6 +480,11 @@ namespace OracleAccountChecking
         private void DisableImgBtn_CheckedChanged(object sender, EventArgs e)
         {
             DisableImg = DisableImgBtn.Checked;
+        }
+
+        private void ClickCookieCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            ClickCookie = ClickCookieCheckBox.Checked;
         }
     }
 }

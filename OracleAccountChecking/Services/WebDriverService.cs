@@ -41,6 +41,7 @@ namespace OracleAccountChecking.Services
         {
             try
             {
+                if (!FrmMain.ClickCookie) return;
                 var iframe = driver.FindElement(@"iframe[name=""trustarc_cm""]", DefaultTimeout / 2, token);
                 driver.SwitchTo().Frame(iframe);
                 await Task.Delay(3000, token).ConfigureAwait(false);

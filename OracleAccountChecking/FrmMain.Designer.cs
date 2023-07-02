@@ -65,6 +65,7 @@
             this.StartPointInput = new Krypton.Toolkit.KryptonNumericUpDown();
             this.PrivateModeBtn = new Krypton.Toolkit.KryptonCheckBox();
             this.DisableImgBtn = new Krypton.Toolkit.KryptonCheckBox();
+            this.ClickCookieCheckBox = new Krypton.Toolkit.KryptonCheckBox();
             this.SuspendLayout();
             // 
             // DataBtn
@@ -551,12 +552,25 @@
             this.DisableImgBtn.Values.Text = "Disable Image";
             this.DisableImgBtn.CheckedChanged += new System.EventHandler(this.DisableImgBtn_CheckedChanged);
             // 
+            // ClickCookieCheckBox
+            // 
+            this.ClickCookieCheckBox.Location = new System.Drawing.Point(127, 452);
+            this.ClickCookieCheckBox.Name = "ClickCookieCheckBox";
+            this.ClickCookieCheckBox.Size = new System.Drawing.Size(94, 20);
+            this.ClickCookieCheckBox.StateCommon.ShortText.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.ClickCookieCheckBox.StateCommon.ShortText.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.ClickCookieCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.ClickCookieCheckBox.TabIndex = 41;
+            this.ClickCookieCheckBox.Values.Text = "Click Cookie";
+            this.ClickCookieCheckBox.CheckedChanged += new System.EventHandler(this.ClickCookieCheckBox_CheckedChanged);
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
             this.ClientSize = new System.Drawing.Size(384, 486);
+            this.Controls.Add(this.ClickCookieCheckBox);
             this.Controls.Add(this.DisableImgBtn);
             this.Controls.Add(this.PrivateModeBtn);
             this.Controls.Add(this.StartPointInput);
@@ -642,5 +656,6 @@
         private Krypton.Toolkit.KryptonNumericUpDown StartPointInput;
         private Krypton.Toolkit.KryptonCheckBox PrivateModeBtn;
         private Krypton.Toolkit.KryptonCheckBox DisableImgBtn;
+        private Krypton.Toolkit.KryptonCheckBox ClickCookieCheckBox;
     }
 }
