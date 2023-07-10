@@ -51,6 +51,16 @@ namespace ChromeDriverLibrary
             }, token);
         }
 
+        public static void ClickByJS(this UndetectedChromeDriver driver, string selector, int timeout, CancellationToken token)
+        {
+            var waiter = GetWaiter(driver, timeout);
+            waiter.Until(webdriver =>
+            {
+                driver.ExecuteScript("arguments[0].click();", driver.FindElement(By.CssSelector(selector)));
+                return true;
+            }, token);
+        }
+
         public static IAlert SwitchToAlert(this UndetectedChromeDriver driver, int timeout, CancellationToken token)
         {
             var waiter = GetWaiter(driver, timeout);

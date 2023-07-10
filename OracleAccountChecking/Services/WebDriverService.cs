@@ -69,11 +69,9 @@ namespace OracleAccountChecking.Services
                 {
                     try
                     {
-                        var submitFederationBtn = driver.FindElement("#submit-federation", DefaultTimeout / 6, token);
+                        driver.ClickByJS("#submit-federation", DefaultTimeout / 6, token);
                         await Task.Delay(3000, token).ConfigureAwait(false);
-
-                        driver.Click(submitFederationBtn, 5, token);
-                        await Task.Delay(3000, token).ConfigureAwait(false);
+                        try { driver.ClickByJS("#submit-federation", 1, token); } catch { }
 
                         for (var innerLoop = 1; innerLoop <= 3; innerLoop++)
                         {
@@ -83,7 +81,7 @@ namespace OracleAccountChecking.Services
 
                             if (driver.Url.Contains("identity.oraclecloud.com/ui/v1/signin"))
                                 return Tuple.Create(true, string.Empty);
-                            try { driver.Click(submitFederationBtn, 1, token); } catch { }
+                            try { driver.ClickByJS("#submit-federation", 1, token); } catch { }
                         }
 
                         if (!driver.Url.Contains("identity.oraclecloud.com/ui/v1/signin")) continue;
