@@ -23,7 +23,7 @@ namespace OracleAccountChecking.Services
             var button = driver.FindElement("#cloudAccountButton", DefaultTimeout, token);
             driver.Click(button, 5, token);
 
-            await Task.Delay(5, token).ConfigureAwait(false);
+            await Task.Delay(5000, token).ConfigureAwait(false);
             if (!driver.Url.Contains("cloud/sign-in.html")) return true;
 
             try

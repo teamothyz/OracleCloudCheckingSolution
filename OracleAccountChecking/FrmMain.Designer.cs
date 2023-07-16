@@ -60,7 +60,6 @@
             this.ClearExtensionsBtn = new Krypton.Toolkit.KryptonButton();
             this.LoadExtensionBtn = new Krypton.Toolkit.KryptonButton();
             this.kryptonLabel11 = new Krypton.Toolkit.KryptonLabel();
-            this.kryptonLabel12 = new Krypton.Toolkit.KryptonLabel();
             this.StatusTextBox = new Krypton.Toolkit.KryptonTextBox();
             this.StartPointInput = new Krypton.Toolkit.KryptonNumericUpDown();
             this.PrivateModeBtn = new Krypton.Toolkit.KryptonCheckBox();
@@ -435,7 +434,7 @@
             // ExtensionBtn
             // 
             this.ExtensionBtn.CornerRoundingRadius = -1F;
-            this.ExtensionBtn.Location = new System.Drawing.Point(245, 368);
+            this.ExtensionBtn.Location = new System.Drawing.Point(245, 433);
             this.ExtensionBtn.Name = "ExtensionBtn";
             this.ExtensionBtn.Size = new System.Drawing.Size(119, 25);
             this.ExtensionBtn.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
@@ -450,7 +449,7 @@
             // ClearExtensionsBtn
             // 
             this.ClearExtensionsBtn.CornerRoundingRadius = -1F;
-            this.ClearExtensionsBtn.Location = new System.Drawing.Point(245, 447);
+            this.ClearExtensionsBtn.Location = new System.Drawing.Point(245, 505);
             this.ClearExtensionsBtn.Name = "ClearExtensionsBtn";
             this.ClearExtensionsBtn.Size = new System.Drawing.Size(119, 25);
             this.ClearExtensionsBtn.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
@@ -465,7 +464,7 @@
             // LoadExtensionBtn
             // 
             this.LoadExtensionBtn.CornerRoundingRadius = -1F;
-            this.LoadExtensionBtn.Location = new System.Drawing.Point(245, 408);
+            this.LoadExtensionBtn.Location = new System.Drawing.Point(245, 469);
             this.LoadExtensionBtn.Name = "LoadExtensionBtn";
             this.LoadExtensionBtn.Size = new System.Drawing.Size(119, 25);
             this.LoadExtensionBtn.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
@@ -488,23 +487,12 @@
             this.kryptonLabel11.TabIndex = 33;
             this.kryptonLabel11.Values.Text = "Bắt đầu từ:";
             // 
-            // kryptonLabel12
-            // 
-            this.kryptonLabel12.Location = new System.Drawing.Point(12, 409);
-            this.kryptonLabel12.Name = "kryptonLabel12";
-            this.kryptonLabel12.Size = new System.Drawing.Size(74, 20);
-            this.kryptonLabel12.StateCommon.ShortText.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.kryptonLabel12.StateCommon.ShortText.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.kryptonLabel12.StateCommon.ShortText.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.kryptonLabel12.TabIndex = 34;
-            this.kryptonLabel12.Values.Text = "Trạng thái:";
-            // 
             // StatusTextBox
             // 
-            this.StatusTextBox.Location = new System.Drawing.Point(127, 409);
+            this.StatusTextBox.Location = new System.Drawing.Point(245, 368);
             this.StatusTextBox.Name = "StatusTextBox";
             this.StatusTextBox.ReadOnly = true;
-            this.StatusTextBox.Size = new System.Drawing.Size(100, 23);
+            this.StatusTextBox.Size = new System.Drawing.Size(119, 23);
             this.StatusTextBox.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this.StatusTextBox.StateCommon.Content.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.StatusTextBox.TabIndex = 37;
@@ -554,7 +542,7 @@
             // 
             // ClickCookieCheckBox
             // 
-            this.ClickCookieCheckBox.Location = new System.Drawing.Point(127, 452);
+            this.ClickCookieCheckBox.Location = new System.Drawing.Point(247, 401);
             this.ClickCookieCheckBox.Name = "ClickCookieCheckBox";
             this.ClickCookieCheckBox.Size = new System.Drawing.Size(94, 20);
             this.ClickCookieCheckBox.StateCommon.ShortText.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
@@ -569,13 +557,12 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
-            this.ClientSize = new System.Drawing.Size(384, 486);
+            this.ClientSize = new System.Drawing.Size(384, 542);
             this.Controls.Add(this.ClickCookieCheckBox);
             this.Controls.Add(this.DisableImgBtn);
             this.Controls.Add(this.PrivateModeBtn);
             this.Controls.Add(this.StartPointInput);
             this.Controls.Add(this.StatusTextBox);
-            this.Controls.Add(this.kryptonLabel12);
             this.Controls.Add(this.kryptonLabel11);
             this.Controls.Add(this.LoadExtensionBtn);
             this.Controls.Add(this.ClearExtensionsBtn);
@@ -609,8 +596,8 @@
             this.Controls.Add(this.DataBtn);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(400, 525);
-            this.MinimumSize = new System.Drawing.Size(400, 525);
+            this.MaximumSize = new System.Drawing.Size(400, 581);
+            this.MinimumSize = new System.Drawing.Size(400, 581);
             this.Name = "FrmMain";
             this.Text = "Oracle Scan - Tele: @lukaxsx";
             this.ResumeLayout(false);
@@ -651,7 +638,6 @@
         private Krypton.Toolkit.KryptonButton ClearExtensionsBtn;
         private Krypton.Toolkit.KryptonButton LoadExtensionBtn;
         private Krypton.Toolkit.KryptonLabel kryptonLabel11;
-        private Krypton.Toolkit.KryptonLabel kryptonLabel12;
         private Krypton.Toolkit.KryptonTextBox StatusTextBox;
         private Krypton.Toolkit.KryptonNumericUpDown StartPointInput;
         private Krypton.Toolkit.KryptonCheckBox PrivateModeBtn;
