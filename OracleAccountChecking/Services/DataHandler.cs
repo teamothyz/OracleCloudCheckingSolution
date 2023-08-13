@@ -90,17 +90,18 @@ namespace OracleAccountChecking.Services
             }
         }
 
-        public static void WriteSuccessData(Account acc, List<string> bills)
+        public static void WriteSuccessData(Account acc, List<string> bills, bool is2FA = false)
         {
             lock (lockSuccess)
             {
                 try
                 {
+                    var postFix = is2FA ? "_2FA" : "";
                     var basePath = AppDomain.CurrentDomain.BaseDirectory;
                     var directoryPath = $"{basePath}/output";
                     var subDirectoryPath = $"{basePath}/output/success";
 
-                    var fileName = $"{DateTime.Now:ddMMyyyy}success.txt";
+                    var fileName = $"{DateTime.Now:ddMMyyyy}success{postFix}.txt";
                     if (!Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath);
                     if (!Directory.Exists(subDirectoryPath)) Directory.CreateDirectory(subDirectoryPath);
 

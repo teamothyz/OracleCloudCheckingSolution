@@ -139,6 +139,9 @@ namespace OracleAccountChecking.Services
                     if (driver.Url.Contains("ui/v1/pwdmustchange"))
                         return Tuple.Create(true, "[login] pwdmustchange");
 
+                    var is2FA = Check2FA(driver, token);
+                    if (is2FA) return Tuple.Create(true, "2FA");
+
                     var loginSuccess = CheckValidCustomLogin(driver, token);
                     if (!loginSuccess) return Tuple.Create(false, "[login] invalid email or password");
 
@@ -162,7 +165,20 @@ namespace OracleAccountChecking.Services
                 _ = driver.FindElement(@"div[class=""error-message""]", 5, token);
                 return false;
             }
-            catch { return true; }
+            catch
+            {
+                return true;
+            }
+        }
+
+        private static bool Check2FA(UndetectedChromeDriver driver, CancellationToken token)
+        {
+            try
+            {
+                var _2faElm = driver.FindElement("#ui-id-1", 5, token);
+                return _2faElm.Text.Contains("Enable Secure Verification");
+            }
+            catch { return false; }
         }
 
         private static bool CheckInvalidTenant(UndetectedChromeDriver driver, CancellationToken token)
@@ -201,6 +217,9 @@ namespace OracleAccountChecking.Services
 
                     if (driver.Url.Contains("ui/v1/pwdmustchange"))
                         return Tuple.Create(true, "pwdmustchange");
+
+                    var is2FA = Check2FA(driver, token);
+                    if (is2FA) return Tuple.Create(true, "2FA");
 
                     var loginSuccess = CheckValidLogin(driver, token);
                     if (!loginSuccess) return Tuple.Create(false, "invalid email or password");

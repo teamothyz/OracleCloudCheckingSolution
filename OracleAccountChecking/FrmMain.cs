@@ -296,6 +296,19 @@ namespace OracleAccountChecking
                     }
                     return;
                 }
+                else if (loginRs.Item1 && loginRs.Item2 == "2FA")
+                {
+                    DataHandler.WriteSuccessData(account, new List<string> { "2FA" }, true);
+                    lock (CountModel)
+                    {
+                        Invoke(() =>
+                        {
+                            CountModel.Success++;
+                            CountModel.Scanned++;
+                        });
+                    }
+                    return;
+                }
 
                 bills = await WebDriverService.GetBilling(driver, token);
                 DataHandler.WriteSuccessData(account, bills);
